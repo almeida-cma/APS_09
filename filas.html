@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Posto Saúde + | Fila Inteligente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e0f2fe 0%, #d9f0f7 100%);
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+        }
+
+        /* container principal */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* cabeçalho */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #0b5e7e, #1b7e9f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #155f74;
+            font-weight: 500;
+            margin-top: 6px;
+            font-size: 1rem;
+        }
+
+        /* grid responsivo */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        /* cards gerais */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 32, 64, 0.2);
+            padding: 1.5rem 1.4rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #0a4b62;
+            border-left: 6px solid #2aa7c2;
+            padding-left: 14px;
+            margin-bottom: 1.2rem;
+        }
+
+        /* formulário */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #1e6f89;
+            font-size: 0.85rem;
+        }
+
+        input, select {
+            background: #f9fcff;
+            border: 1px solid #bfdbe8;
+            border-radius: 28px;
+            padding: 12px 18px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #2aa7c2;
+            box-shadow: 0 0 0 3px rgba(42, 167, 194, 0.2);
+        }
+
+        .btn {
+            background: #1f8cad;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 22px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+
+        .btn-primary {
+            background: #0f6b88;
+        }
+
+        .btn-primary:hover {
+            background: #0a556e;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #2c9f6e;
+        }
+
+        .btn-success:hover {
+            background: #24875c;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1f8cad;
+            color: #1f8cad;
+            margin-top: 0;
+        }
+
+        .btn-outline:hover {
+            background: #e2f0f5;
+        }
+
+        /* lista de fila */
+        .fila-lista {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .paciente-item {
+            background: #fefefe;
+            border-radius: 24px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-left: 8px solid;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: 0.1s;
+        }
+
+        .prioridade-alta {
+            border-left-color: #e67e22;
+            background: #fff6ed;
+        }
+
+        .prioridade-normal {
+            border-left-color: #2aa7c2;
+        }
+
+        .info-paciente {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nome-senha {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .senha-badge {
+            background: #d4eef5;
+            padding: 3px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #0a4b62;
+            display: inline-block;
+            width: fit-content;
+            margin-top: 5px;
+        }
+
+        .idade-badge {
+            font-size: 0.7rem;
+            background: #eef2f5;
+            border-radius: 20px;
+            padding: 2px 8px;
+            margin-top: 4px;
+            width: fit-content;
+        }
+
+        .acoes-paciente {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-chamar {
+            background: #2c9f6e;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-remover {
+            background: #dc6b5c;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* painel de chamada em destaque */
+        .painel-chamada {
+            background: linear-gradient(135deg, #0c4e66, #126e8a);
+            color: white;
+            text-align: center;
+            border-radius: 44px;
+            padding: 0.8rem 1rem 1rem;
+            margin-bottom: 28px;
+        }
+
+        .chamada-atual {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: #fef9e8;
+            display: inline-block;
+            padding: 0.3rem 1.6rem;
+            border-radius: 60px;
+            color: #0b5e7e;
+            margin-top: 6px;
+            font-family: monospace;
+        }
+
+        .chamada-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .historico {
+            background: #ffffffcc;
+            border-radius: 28px;
+            padding: 12px 20px;
+            margin-top: 16px;
+            color: #1a2f3a;
+            font-size: 0.85rem;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #2c697e;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 720px) {
+            .paciente-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .acoes-paciente {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏥 Posto Saúde + <span style="font-size: 1.6rem;">⚕️</span></h1>
+        <p>📋 Fila inteligente • Atendimento humanizado • Prioridade para idosos (60+)</p>
+    </div>
+
+    <!-- PAINEL DE CHAMADA EM DESTAQUE -->
+    <div class="painel-chamada">
+        <div class="chamada-label">🔊 PRÓXIMO(A) PACIENTE</div>
+        <div class="chamada-atual" id="chamadaAtualDisplay">---</div>
+        <div style="margin-top: 8px;">
+            <button id="btnChamarProximo" class="btn btn-outline" style="background: rgba(255,255,240,0.2); color:white; border-color: white;">➕ Chamar próximo da fila</button>
+        </div>
+        <div class="historico" id="historicoChamadas">
+            📜 Histórico de chamadas vazio
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- CARD CADASTRO DE PACIENTE -->
+        <div class="card">
+            <h2>🧑‍🤝‍🧑 Novo paciente</h2>
+            <div class="form-group">
+                <label>👤 Nome completo</label>
+                <input type="text" id="nomePaciente" placeholder="Ex: Maria da Silva" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>🎂 Idade (anos)</label>
+                <input type="number" id="idadePaciente" placeholder="Ex: 42" min="0" max="120" value="30">
+            </div>
+            <div class="form-group">
+                <label>⚡ Prioridade extra (opcional)</label>
+                <select id="prioridadeExtra">
+                    <option value="normal">Padrão</option>
+                    <option value="prioritario">Prioritário (ex: gestante, mobilidade reduzida)</option>
+                </select>
+                <small style="color:#4f7a8a;">✔ Idosos (≥60 anos) ganham prioridade automática</small>
+            </div>
+            <button id="btnCadastrar" class="btn btn-primary">➕ Gerar senha e entrar na fila</button>
+        </div>
+
+        <!-- CARD FILA DE ESPERA ATUAL -->
+        <div class="card">
+            <h2>📌 Fila de espera <span id="contadorFila" style="font-size: 0.9rem;">(0)</span></h2>
+            <div id="listaFilaContainer" class="fila-lista">
+                <div style="color:#8aaebd; text-align:center; padding: 1rem;">Nenhum paciente na fila</div>
+            </div>
+            <button id="limparFilaBtn" class="btn-outline btn" style="margin-top: 16px;">🗑️ Limpar toda fila</button>
+        </div>
+
+        <!-- CARD INFORMAÇÕES E REGRAS -->
+        <div class="card">
+            <h2>📋 Regras da fila</h2>
+            <ul style="margin-left: 1.3rem; color: #2c5a6e; line-height: 1.5;">
+                <li>✅ Idosos (≥60 anos) sempre têm prioridade máxima.</li>
+                <li>✅ Prioridade extra (gestante / mobilidade) + idosos são atendidos primeiro.</li>
+                <li>✅ Ordem decrescente: idoso+extra → idoso → extra → normal.</li>
+                <li>✅ Ao chamar próximo, o paciente é removido da fila e registrado no histórico.</li>
+                <li>✅ Senha gerada automaticamente: formato <strong>PS-XXX</strong>.</li>
+            </ul>
+            <div style="background:#e5f3f8; border-radius: 28px; margin-top: 20px; padding: 12px; text-align: center;">
+                💡 <strong>Dica:</strong> Pacientes idosos ganham destaque com borda laranja.
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        🧾 Sistema de Fila Inteligente • Postos de Saúde • MVP com localStorage (dados persistentes no navegador)
+    </div>
+</div>
+
+<script>
+    // ---------- MODELO DE DADOS ----------
+    // Cada paciente: { id, nome, idade, prioridadeExtra, tipoPrioridadeFinal, senha, timestamp }
+    // tipoPrioridadeFinal: 'priority_high' (idoso+extra) / 'idoso' / 'extra' / 'normal'
+    // Ordenação: priority_high > idoso > extra > normal. Dentro do mesmo nível, por ordem de chegada (timestamp)
+    
+    let pacientes = [];   // array em memória
+    
+    // Chave localStorage
+    const STORAGE_KEY = 'fila_saude_mvp';
+    let ultimoNumeroSenha = 0;   // para gerar senhas sequenciais PS-001, PS-002...
+    
+    // Histórico de chamadas (array de strings)
+    let historicoChamadas = [];
+    
+    // Elementos DOM
+    const btnCadastrar = document.getElementById('btnCadastrar');
+    const nomeInput = document.getElementById('nomePaciente');
+    const idadeInput = document.getElementById('idadePaciente');
+    const prioridadeExtraSelect = document.getElementById('prioridadeExtra');
+    const listaFilaContainer = document.getElementById('listaFilaContainer');
+    const contadorFilaSpan = document.getElementById('contadorFila');
+    const btnChamarProximo = document.getElementById('btnChamarProximo');
+    const chamadaAtualDisplay = document.getElementById('chamadaAtualDisplay');
+    const historicoChamadasDiv = document.getElementById('historicoChamadas');
+    const limparFilaBtn = document.getElementById('limparFilaBtn');
+    
+    // Funções auxiliares de prioridade
+    function definirPrioridadeFinal(idade, prioridadeExtra) {
+        const isIdoso = idade >= 60;
+        const isExtra = (prioridadeExtra === 'prioritario');
+        
+        if (isIdoso && isExtra) return 'priority_high';     // idoso + extra = prioridade máxima
+        if (isIdoso) return 'idoso';
+        if (isExtra) return 'extra';
+        return 'normal';
+    }
+    
+    // Mapear peso para ordenação (maior peso = primeiro)
+    function pesoPrioridade(tipo) {
+        switch(tipo) {
+            case 'priority_high': return 4;
+            case 'idoso': return 3;
+            case 'extra': return 2;
+            default: return 1;
+        }
+    }
+    
+    // Ordenar fila de acordo com regras: maior peso e, se igual, mais antigo (timestamp)
+    function ordenarFila(pacientesArray) {
+        return [...pacientesArray].sort((a,b) => {
+            const pesoA = pesoPrioridade(a.tipoPrioridadeFinal);
+            const pesoB = pesoPrioridade(b.tipoPrioridadeFinal);
+            if (pesoA !== pesoB) return pesoB - pesoA;
+            // mesmo nível de prioridade: quem chegou primeiro (timestamp menor)
+            return a.timestamp - b.timestamp;
+        });
+    }
+    
+    // Gerar nova senha no formato PS-XXX (incrementa)
+    function gerarSenha() {
+        ultimoNumeroSenha++;
+        const numeroFormatado = String(ultimoNumeroSenha).padStart(3, '0');
+        return `PS-${numeroFormatado}`;
+    }
+    
+    // Salvar no localStorage e renderizar tudo
+    function persistirEAtualizar() {
+        // Salvar pacientes e último número de senha e histórico
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            pacientes: pacientes,
+            ultimoNumeroSenha: ultimoNumeroSenha,
+            historicoChamadas: historicoChamadas
+        }));
+        renderizarFila();
+        atualizarContador();
+        renderizarHistorico();
+        // Se não houver pacientes e não houver chamada atual, limpar display da chamada (mas manter o "---" se não houver)
+        // O painel de chamada atual não precisa sumir, apenas mostra a última chamada ou "---" 
+        // mas quando chamar próximo ele atualiza.
+        // Vamos deixar o chamadaAtualDisplay como está, pois ele só é modificado ao chamar.
+    }
+    
+    // carregar dados do localStorage
+    function carregarDados() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+            // dados padrão de exemplo: alguns pacientes pra demonstração
+            const exemploPacientes = [];
+            // criar dois pacientes exemplo: uma idosa e um normal
+            const timestampBase = Date.now() - 3600000;
+            const idosoExemplo = {
+                id: crypto.randomUUID ? crypto.randomUUID() : 'id1_' + Date.now(),
+                nome: "Ana da Conceição (Idosa 72a)",
+                idade: 72,
+                prioridadeExtra: "normal",
+                tipoPrioridadeFinal: "idoso",
+                senha: "PS-001",
+                timestamp: timestampBase + 1000
+            };
+            const normalExemplo = {
+                id: crypto.randomUUID ? crypto.randomUUID() : 'id2_' + Date.now(),
+                nome: "Carlos Andrade",
+                idade: 34,
+                prioridadeExtra: "normal",
+                tipoPrioridadeFinal: "normal",
+                senha: "PS-002",
+                timestamp: timestampBase + 3000
+            };
+            const gestanteExemplo = {
+                id: crypto.randomUUID ? crypto.randomUUID() : 'id3_' + Date.now(),
+                nome: "Fernanda Lima (Prioritária)",
+                idade: 28,
+                prioridadeExtra: "prioritario",
+                tipoPrioridadeFinal: "extra",
+                senha: "PS-003",
+                timestamp: timestampBase + 5000
+            };
+            exemploPacientes.push(idosoExemplo, normalExemplo, gestanteExemplo);
+            pacientes = exemploPacientes;
+            ultimoNumeroSenha = 3;
+            historicoChamadas = ["✅ Atendido(a): Ana da Conceição (Idosa) - PS-001", "✅ Atendido(a): Carlos Andrade - PS-002"];
+            // ajustar timestamps e ordenação correta
+            persistirEAtualizar();
+            return;
+        }
+        try {
+            const data = JSON.parse(raw);
+            pacientes = data.pacientes || [];
+            ultimoNumeroSenha = data.ultimoNumeroSenha || (pacientes.length > 0 ? Math.max(...pacientes.map(p => {
+                const match = p.senha?.match(/PS-(\d+)/);
+                return match ? parseInt(match[1]) : 0;
+            }), 0) : 0);
+            historicoChamadas = data.historicoChamadas || [];
+        } catch(e) {
+            pacientes = [];
+            ultimoNumeroSenha = 0;
+            historicoChamadas = [];
+        }
+        renderizarFila();
+        atualizarContador();
+        renderizarHistorico();
+    }
+    
+    // Adicionar paciente
+    function adicionarPaciente(nome, idade, prioridadeExtraStr) {
+        if (!nome || nome.trim() === "") {
+            alert("❌ Por favor, informe o nome do paciente.");
+            return false;
+        }
+        const idadeNum = parseInt(idade);
+        if (isNaN(idadeNum) || idadeNum < 0 || idadeNum > 120) {
+            alert("❌ Idade inválida. Digite um número entre 0 e 120.");
+            return false;
+        }
+        const prioridadeExtra = prioridadeExtraStr === "prioritario" ? "prioritario" : "normal";
+        const tipoFinal = definirPrioridadeFinal(idadeNum, prioridadeExtra);
+        const novaSenha = gerarSenha();
+        const novoPaciente = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + '' + Math.random(),
+            nome: nome.trim(),
+            idade: idadeNum,
+            prioridadeExtra: prioridadeExtra,
+            tipoPrioridadeFinal: tipoFinal,
+            senha: novaSenha,
+            timestamp: Date.now()
+        };
+        pacientes.push(novoPaciente);
+        // Ordenar a fila após inserção para manter ordem correta (mas renderização já ordena)
+        persistirEAtualizar();
+        return true;
+    }
+    
+    // Chamar próximo paciente (remove da fila e exibe)
+    function chamarProximo() {
+        if (pacientes.length === 0) {
+            alert("🚫 Nenhum paciente na fila no momento.");
+            chamadaAtualDisplay.innerText = "---";
+            return false;
+        }
+        const filaOrdenada = ordenarFila(pacientes);
+        const proximo = filaOrdenada[0];
+        // remover da lista de pacientes
+        const indexOriginal = pacientes.findIndex(p => p.id === proximo.id);
+        if (indexOriginal !== -1) pacientes.splice(indexOriginal, 1);
+        
+        // exibir no painel
+        chamadaAtualDisplay.innerText = `${proximo.senha} - ${proximo.nome}`;
+        
+        // Adicionar ao histórico
+        const prioridadeStr = 
+            proximo.tipoPrioridadeFinal === 'priority_high' ? '🔴 PRIORIDADE MÁXIMA (Idoso + Extra)' :
+            proximo.tipoPrioridadeFinal === 'idoso' ? '🧓 Idoso(a) prioritário' :
+            proximo.tipoPrioridadeFinal === 'extra' ? '⚠️ Prioritário (extra)' : 'Padrão';
+        const historicoMsg = `🔔 Chamado(a): ${proximo.nome} (${proximo.senha}) • ${prioridadeStr}`;
+        historicoChamadas.unshift(historicoMsg);   // mais recente no topo
+        // manter no máximo 15 registros no histórico visual
+        if (historicoChamadas.length > 20) historicoChamadas.pop();
+        
+        persistirEAtualizar();
+        // efeito sonoro simbólico não incluso, mas foco visual
+        return true;
+    }
+    
+    // remover paciente específico (botão remover da fila)
+    function removerPaciente(idPaciente) {
+        const pacienteRemovido = pacientes.find(p => p.id === idPaciente);
+        if (!pacienteRemovido) return;
+        pacientes = pacientes.filter(p => p.id !== idPaciente);
+        persistirEAtualizar();
+        // se o painel de chamada atual estava mostrando algo que não tem relação, permanece
+        if (pacientes.length === 0 && chamadaAtualDisplay.innerText !== "---") {
+            // não limpamos automaticamente, só se quiser
+        }
+    }
+    
+    // limpar toda fila (confirmar)
+    function limparTodaFila() {
+        if (pacientes.length === 0) {
+            alert("A fila já está vazia.");
+            return;
+        }
+        const confirmacao = confirm("⚠️ Tem certeza que deseja remover TODOS os pacientes da fila? Essa ação não pode ser desfeita.");
+        if (confirmacao) {
+            pacientes = [];
+            persistirEAtualizar();
+            chamadaAtualDisplay.innerText = "---";
+        }
+    }
+    
+    // renderizar lista da fila (ordenada)
+    function renderizarFila() {
+        if (!listaFilaContainer) return;
+        const filaOrdenada = ordenarFila(pacientes);
+        
+        if (filaOrdenada.length === 0) {
+            listaFilaContainer.innerHTML = `<div style="color:#8aaebd; text-align:center; padding: 1rem;">✅ Nenhum paciente aguardando</div>`;
+            return;
+        }
+        
+        let html = '';
+        for (let p of filaOrdenada) {
+            let prioridadeClasse = 'prioridade-normal';
+            let prioridadeTexto = '';
+            if (p.tipoPrioridadeFinal === 'priority_high') {
+                prioridadeClasse = 'prioridade-alta';
+                prioridadeTexto = '🔴 Idoso + Prioridade Especial';
+            } else if (p.tipoPrioridadeFinal === 'idoso') {
+                prioridadeClasse = 'prioridade-alta';
+                prioridadeTexto = '🧓 Idoso (prioridade por idade)';
+            } else if (p.tipoPrioridadeFinal === 'extra') {
+                prioridadeClasse = 'prioridade-alta';
+                prioridadeTexto = '⚠️ Prioridade especial';
+            } else {
+                prioridadeTexto = '🔹 Atendimento geral';
+            }
+            
+            html += `
+                <div class="paciente-item ${prioridadeClasse}">
+                    <div class="info-paciente">
+                        <div class="nome-senha">${escapeHtml(p.nome)}</div>
+                        <div class="senha-badge">🎫 ${p.senha}</div>
+                        <div class="idade-badge">📅 ${p.idade} anos</div>
+                        <div style="font-size: 0.7rem; color:#4f7a8a; margin-top: 3px;">${prioridadeTexto}</div>
+                    </div>
+                    <div class="acoes-paciente">
+                        <button class="btn-chamar" data-id="${p.id}" data-acao="chamar-especifico">📢 Chamar</button>
+                        <button class="btn-remover" data-id="${p.id}" data-acao="remover">✖ Remover</button>
+                    </div>
+                </div>
+            `;
+        }
+        listaFilaContainer.innerHTML = html;
+        
+        // adicionar eventos para botões dinâmicos
+        document.querySelectorAll('.btn-chamar[data-acao="chamar-especifico"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                chamarPacienteEspecifico(id);
+            });
+        });
+        document.querySelectorAll('.btn-remover[data-acao="remover"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                removerPaciente(id);
+            });
+        });
+    }
+    
+    // Chamar paciente específico (remove da fila e atualiza chamada)
+    function chamarPacienteEspecifico(id) {
+        const index = pacientes.findIndex(p => p.id === id);
+        if (index === -1) return;
+        const paciente = pacientes[index];
+        pacientes.splice(index, 1);
+        chamadaAtualDisplay.innerText = `${paciente.senha} - ${paciente.nome}`;
+        const prioridadeStr = 
+            paciente.tipoPrioridadeFinal === 'priority_high' ? '🔴 Máxima (Idoso+Extra)' :
+            paciente.tipoPrioridadeFinal === 'idoso' ? '🧓 Idoso' :
+            paciente.tipoPrioridadeFinal === 'extra' ? '⚠️ Prioritário' : 'Padrão';
+        const msg = `🔔 Chamado(a) específico: ${paciente.nome} (${paciente.senha}) • ${prioridadeStr}`;
+        historicoChamadas.unshift(msg);
+        if (historicoChamadas.length > 20) historicoChamadas.pop();
+        persistirEAtualizar();
+    }
+    
+    function atualizarContador() {
+        contadorFilaSpan.innerText = `(${pacientes.length})`;
+    }
+    
+    function renderizarHistorico() {
+        if (!historicoChamadasDiv) return;
+        if (historicoChamadas.length === 0) {
+            historicoChamadasDiv.innerHTML = "📜 Nenhum atendimento registrado ainda.";
+            return;
+        }
+        let html = '';
+        // exibir últimos 8 registros mais recentes (primeiros do array)
+        for (let i = 0; i < Math.min(historicoChamadas.length, 8); i++) {
+            html += `<div style="border-bottom: 1px solid #cde3ec; padding: 5px 0;">${historicoChamadas[i]}</div>`;
+        }
+        historicoChamadasDiv.innerHTML = html;
+    }
+    
+    // escape simples para XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // Eventos
+    btnCadastrar.addEventListener('click', () => {
+        const nome = nomeInput.value;
+        const idade = idadeInput.value;
+        const prioridadeExtra = prioridadeExtraSelect.value;
+        const sucesso = adicionarPaciente(nome, idade, prioridadeExtra);
+        if (sucesso) {
+            nomeInput.value = '';
+            idadeInput.value = '30';
+            prioridadeExtraSelect.value = 'normal';
+            nomeInput.focus();
+        }
+    });
+    
+    btnChamarProximo.addEventListener('click', () => {
+        chamarProximo();
+    });
+    
+    limparFilaBtn.addEventListener('click', () => {
+        limparTodaFila();
+    });
+    
+    // Inicialização
+    carregarDados();
+</script>
+</body>
+</html>

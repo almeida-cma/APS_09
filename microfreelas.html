@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BairroFreela | Plataforma de Microfreelas entre Vizinhos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f5 0%, #e0e8ef 100%);
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #2c7a4d, #1b5e3a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #2c5a3e;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .badge-local {
+            background: #d4e6d4;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* grid responsivo */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0, 32, 16, 0.12);
+            padding: 1.5rem 1.3rem;
+            transition: 0.2s;
+            border: 1px solid rgba(70, 120, 70, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c6e49;
+            border-left: 5px solid #4caf50;
+            padding-left: 14px;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #3e6b47;
+            font-size: 0.85rem;
+        }
+
+        input, select, textarea {
+            background: #fefef7;
+            border: 1px solid #cbdcd0;
+            border-radius: 24px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn {
+            background: #3c8d5e;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .btn-primary {
+            background: #2e7d53;
+        }
+
+        .btn-primary:hover {
+            background: #23643f;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2e7d53;
+            color: #2e7d53;
+        }
+
+        .btn-small {
+            padding: 5px 14px;
+            font-size: 0.75rem;
+            width: auto;
+            margin-top: 0;
+        }
+
+        .servico-item, .trabalho-item {
+            background: #fafef7;
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 14px;
+            border-left: 6px solid #6fbf4c;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .servico-titulo {
+            font-weight: 800;
+            font-size: 1.05rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .preco {
+            color: #2e7d53;
+            font-weight: bold;
+        }
+
+        .descricao {
+            font-size: 0.8rem;
+            color: #5a6e5c;
+            margin: 6px 0;
+        }
+
+        .prestador {
+            font-size: 0.7rem;
+            background: #eef3ea;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 40px;
+        }
+
+        .avaliacao-estrelas {
+            display: flex;
+            gap: 3px;
+            margin-top: 6px;
+            align-items: center;
+        }
+
+        .star {
+            color: #ffb74d;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .star-active {
+            color: #ff9800;
+            text-shadow: 0 0 2px orange;
+        }
+
+        .scrol-list {
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #598b6e;
+            margin-top: 20px;
+        }
+
+        .contratar-area {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge-contratado {
+            background: #d4e2d0;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        hr {
+            margin: 12px 0;
+            border-color: #e0ecd9;
+        }
+
+        @media (max-width: 780px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏘️ BairroFreela <span>🛠️</span></h1>
+        <p>Conectando vizinhos • Ofereça serviços • Contrate locais • Avalie trabalhos</p>
+        <div class="badge-local">📍 Bairro: Jardim das Flores (região demo)</div>
+    </div>
+
+    <div class="dashboard">
+        <!-- CARD 1: OFERECER SERVIÇO -->
+        <div class="card">
+            <h2>📢 Oferecer serviço</h2>
+            <div class="form-group">
+                <label>🧑‍🔧 Seu nome / apelido</label>
+                <input type="text" id="prestadorNome" placeholder="Ex: Seu Jorge" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>🔧 Título do serviço</label>
+                <input type="text" id="servicoTitulo" placeholder="Ex: Conserto de torneira, Aulas de violão">
+            </div>
+            <div class="form-group">
+                <label>📝 Descrição</label>
+                <textarea id="servicoDescricao" rows="2" placeholder="Detalhes do serviço..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>💰 Preço (R$)</label>
+                <input type="number" id="servicoPreco" placeholder="Ex: 50" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>📂 Categoria</label>
+                <select id="servicoCategoria">
+                    <option value="Reparos">🔧 Reparos / Manutenção</option>
+                    <option value="Limpeza">🧹 Limpeza / Jardinagem</option>
+                    <option value="Aulas">📚 Aulas / Reforço</option>
+                    <option value="Tecnologia">💻 Tecnologia / Suporte</option>
+                    <option value="Entregas">🛵 Entregas / Rápidas</option>
+                    <option value="Outros">⭐ Outros</option>
+                </select>
+            </div>
+            <button id="btnOfertar" class="btn btn-primary">➕ Publicar serviço</button>
+            
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 1.1rem;">📌 Meus serviços ofertados</h3>
+                <div id="meusServicosList" class="scrol-list" style="max-height: 220px;">
+                    <div style="color:#9bbc9b; text-align:center;">Você ainda não publicou serviços</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: SERVICOS DISPONÍVEIS (CONTRATAR VIZINHOS) -->
+        <div class="card">
+            <h2>🛒 Contratar vizinhos</h2>
+            <div class="form-group">
+                <label>🔍 Filtrar por categoria</label>
+                <select id="filtroCategoria">
+                    <option value="Todas">Todas categorias</option>
+                    <option value="Reparos">🔧 Reparos</option>
+                    <option value="Limpeza">🧹 Limpeza</option>
+                    <option value="Aulas">📚 Aulas</option>
+                    <option value="Tecnologia">💻 Tecnologia</option>
+                    <option value="Entregas">🛵 Entregas</option>
+                    <option value="Outros">⭐ Outros</option>
+                </select>
+            </div>
+            <div id="servicosDisponiveisList" class="scrol-list" style="max-height: 380px;">
+                <div style="color:#9bbc9b; text-align:center;">Carregando serviços...</div>
+            </div>
+        </div>
+
+        <!-- CARD 3: MEUS CONTRATOS E AVALIAÇÕES -->
+        <div class="card">
+            <h2>📋 Meus trabalhos & avaliações</h2>
+            <div style="margin-bottom: 14px; background:#eef3ea; border-radius: 24px; padding: 10px;">
+                <span>⭐ <strong>Sistema de reputação:</strong> Avalie serviços que você contratou.</span>
+            </div>
+            <h3 style="font-size: 1rem;">📦 Contratos realizados (como contratante)</h3>
+            <div id="meusContratosList" class="scrol-list" style="max-height: 260px;">
+                <div style="color:#9bbc9b;">Nenhum contrato ainda. Contrate um serviço acima.</div>
+            </div>
+            <hr>
+            <h3 style="font-size: 1rem;">⭐ Minhas avaliações recebidas (como prestador)</h3>
+            <div id="minhasAvaliacoesRecebidas" class="scrol-list" style="max-height: 180px;">
+                <div style="color:#9bbc9b;">Aguardando avaliações dos clientes.</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        🧾 Dados salvos localmente no navegador • BairroFreela: valorize quem está perto!
+    </div>
+</div>
+
+<script>
+    // Estruturas de dados
+    let servicos = [];          // { id, prestadorNome, titulo, descricao, preco, categoria, prestadorId, avaliacaoMedia, totalAvaliacoes }
+    let contratos = [];        // { id, servicoId, contratanteNome, dataContrato, status, avaliacaoNota, avaliacaoComentario, avaliado }
+    let usuarios = [];          // simplificado: prestadores identificados por nome único (caso demo)
+    
+    // Para gerar IDs e controle de prestadorId (usaremos email simulado ou timestamp)
+    const STORAGE_KEY = 'bairroFreelaData';
+    
+    // Usuário corrente (pessoa usando o sistema no navegador, simula "eu" tanto como prestador quanto contratante)
+    let meuNome = "";  // Será solicitado ou padrão "Eu (usuário)"
+    let meuId = "user_" + (localStorage.getItem('bairroFreelaUserId') || (Math.random()*10000|0));
+    if (!localStorage.getItem('bairroFreelaUserId')) {
+        localStorage.setItem('bairroFreelaUserId', meuId);
+    } else {
+        meuId = localStorage.getItem('bairroFreelaUserId');
+    }
+    
+    // Elementos
+    const prestadorNomeInput = document.getElementById('prestadorNome');
+    const servicoTitulo = document.getElementById('servicoTitulo');
+    const servicoDescricao = document.getElementById('servicoDescricao');
+    const servicoPreco = document.getElementById('servicoPreco');
+    const servicoCategoria = document.getElementById('servicoCategoria');
+    const btnOfertar = document.getElementById('btnOfertar');
+    const meusServicosList = document.getElementById('meusServicosList');
+    const servicosDisponiveisList = document.getElementById('servicosDisponiveisList');
+    const meusContratosList = document.getElementById('meusContratosList');
+    const minhasAvaliacoesRecebidas = document.getElementById('minhasAvaliacoesRecebidas');
+    const filtroCategoria = document.getElementById('filtroCategoria');
+    
+    // Função salvar dados
+    function salvarTudo() {
+        const data = {
+            servicos: servicos,
+            contratos: contratos,
+            meuId: meuId,
+            meuNomeGuardado: meuNome
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    
+    function carregarDados() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+            // Dados iniciais de exemplo
+            const demoId1 = "prest_demo1_" + Date.now();
+            const demoId2 = "prest_demo2_" + Date.now();
+            servicos = [
+                { id: "s1", prestadorNome: "Seu Jorge", prestadorId: demoId1, titulo: "Conserto de torneiras e encanamento", descricao: "Resolvo vazamentos e troco registro rapidamente", preco: 65, categoria: "Reparos", avaliacaoMedia: 4.5, totalAvaliacoes: 2 },
+                { id: "s2", prestadorNome: "Dona Clara", prestadorId: demoId2, titulo: "Faxina residencial", descricao: "Limpeza completa, produtos inclusos", preco: 90, categoria: "Limpeza", avaliacaoMedia: 5.0, totalAvaliacoes: 1 },
+                { id: "s3", prestadorNome: "Professor Carlos", prestadorId: "prof_carlos", titulo: "Aulas particulares de Matemática", descricao: "Fundamental e médio, atendimento online ou presencial", preco: 45, categoria: "Aulas", avaliacaoMedia: 0, totalAvaliacoes: 0 }
+            ];
+            contratos = [
+                { id: "c1", servicoId: "s1", contratanteNome: "João (vizinho)", dataContrato: "2026-05-20", status: "concluido", avaliacaoNota: 5, avaliacaoComentario: "Ótimo profissional!", avaliado: true },
+                { id: "c2", servicoId: "s2", contratanteNome: "Maria Silva", dataContrato: "2026-05-18", status: "concluido", avaliacaoNota: 5, avaliacaoComentario: "Excelente limpeza!", avaliado: true }
+            ];
+            meuNome = "Você (usuário)";
+        } else {
+            try {
+                const data = JSON.parse(raw);
+                servicos = data.servicos || [];
+                contratos = data.contratos || [];
+                meuId = data.meuId || meuId;
+                meuNome = data.meuNomeGuardado || "Usuário Local";
+            } catch(e) {}
+        }
+        if (!prestadorNomeInput.value && meuNome && meuNome !== "Você (usuário)") prestadorNomeInput.value = meuNome;
+        else if (!prestadorNomeInput.value) prestadorNomeInput.value = meuNome || "Meu Nome";
+        renderizarMeusServicos();
+        renderizarServicosDisponiveis();
+        renderizarMeusContratosEAvaliacoes();
+    }
+    
+    // ofertar serviço (publicar)
+    function ofertarServico() {
+        let prestador = prestadorNomeInput.value.trim();
+        if (!prestador) {
+            alert("Digite seu nome (como aparecerá para os vizinhos)");
+            return;
+        }
+        const titulo = servicoTitulo.value.trim();
+        const descricao = servicoDescricao.value.trim();
+        const preco = parseFloat(servicoPreco.value);
+        const categoria = servicoCategoria.value;
+        
+        if (!titulo) {
+            alert("Informe o título do serviço");
+            return;
+        }
+        if (isNaN(preco) || preco <= 0) {
+            alert("Informe um preço válido");
+            return;
+        }
+        meuNome = prestador;
+        const novoServico = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + "_" + Math.random(),
+            prestadorNome: prestador,
+            prestadorId: meuId,
+            titulo: titulo,
+            descricao: descricao,
+            preco: preco,
+            categoria: categoria,
+            avaliacaoMedia: 0,
+            totalAvaliacoes: 0
+        };
+        servicos.push(novoServico);
+        salvarTudo();
+        // limpar campos
+        servicoTitulo.value = '';
+        servicoDescricao.value = '';
+        servicoPreco.value = '';
+        // mantém nome e categoria padrão
+        renderizarMeusServicos();
+        renderizarServicosDisponiveis();
+        alert("✅ Serviço publicado com sucesso!");
+    }
+    
+    // função contratar serviço
+    function contratarServico(servicoId) {
+        const servico = servicos.find(s => s.id === servicoId);
+        if (!servico) return;
+        const nomeContratante = meuNome || "Vizinho anônimo";
+        const hoje = new Date().toISOString().slice(0,10);
+        const novoContrato = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + "_cont",
+            servicoId: servico.id,
+            contratanteNome: nomeContratante,
+            dataContrato: hoje,
+            status: "ativo",
+            avaliacaoNota: null,
+            avaliacaoComentario: null,
+            avaliado: false
+        };
+        contratos.push(novoContrato);
+        salvarTudo();
+        renderizarServicosDisponiveis();  // atualiza lista com badges
+        renderizarMeusContratosEAvaliacoes();
+        alert(`📞 Contrato solicitado com ${servico.prestadorNome} para o serviço: ${servico.titulo}. Entre em contato via bate-papo (simulado) pelo bairro!`);
+    }
+    
+    // avaliar um contrato (somente contratante)
+    function avaliarContrato(contratoId, nota, comentario) {
+        const contrato = contratos.find(c => c.id === contratoId);
+        if (!contrato) return;
+        if (contrato.avaliado) {
+            alert("Este contrato já foi avaliado.");
+            return;
+        }
+        contrato.avaliacaoNota = nota;
+        contrato.avaliacaoComentario = comentario;
+        contrato.avaliado = true;
+        contrato.status = "concluido";
+        // atualizar média do prestador
+        const servico = servicos.find(s => s.id === contrato.servicoId);
+        if (servico) {
+            const totalAntigo = servico.totalAvaliacoes || 0;
+            const mediaAntiga = servico.avaliacaoMedia || 0;
+            const novaMedia = (mediaAntiga * totalAntigo + nota) / (totalAntigo + 1);
+            servico.avaliacaoMedia = parseFloat(novaMedia.toFixed(2));
+            servico.totalAvaliacoes = totalAntigo + 1;
+        }
+        salvarTudo();
+        renderizarServicosDisponiveis();
+        renderizarMeusContratosEAvaliacoes();
+        alert(`Avaliação (${nota} estrelas) registrada! Obrigado por contribuir com a comunidade.`);
+    }
+    
+    // render meus serviços ofertados (serviços que o usuário logado criou)
+    function renderizarMeusServicos() {
+        const meus = servicos.filter(s => s.prestadorId === meuId);
+        if (meus.length === 0) {
+            meusServicosList.innerHTML = `<div style="color:#9bbc9b;">Você ainda não publicou serviços. Publique acima!</div>`;
+            return;
+        }
+        let html = '';
+        for (let s of meus) {
+            html += `
+                <div class="servico-item">
+                    <div class="servico-titulo">🛠️ ${escapeHtml(s.titulo)} <span class="preco">R$ ${s.preco}</span></div>
+                    <div class="descricao">${escapeHtml(s.descricao.substring(0, 80))}</div>
+                    <div class="prestador">⭐ ${s.avaliacaoMedia || 0} (${s.totalAvaliacoes} aval.) • ${s.categoria}</div>
+                    <button class="btn-small btn-outline" data-id="${s.id}" data-acao="excluirServico" style="margin-top:6px;">🗑️ Remover anúncio</button>
+                </div>
+            `;
+        }
+        meusServicosList.innerHTML = html;
+        document.querySelectorAll('[data-acao="excluirServico"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                if (confirm("Remover este serviço? Isso não afeta contratos já feitos.")) {
+                    servicos = servicos.filter(s => s.id !== id);
+                    salvarTudo();
+                    renderizarMeusServicos();
+                    renderizarServicosDisponiveis();
+                }
+            });
+        });
+    }
+    
+    // renderizar serviços disponíveis para contratar
+    function renderizarServicosDisponiveis() {
+        const filtro = filtroCategoria.value;
+        let disponiveis = servicos.filter(s => s.prestadorId !== meuId); // não mostrar os próprios serviços
+        if (filtro !== "Todas") {
+            disponiveis = disponiveis.filter(s => s.categoria === filtro);
+        }
+        if (disponiveis.length === 0) {
+            servicosDisponiveisList.innerHTML = `<div style="color:#9bbc9b; text-align:center;">Nenhum serviço disponível nesta categoria ou região.</div>`;
+            return;
+        }
+        let html = '';
+        for (let s of disponiveis) {
+            // verificar se já contratei esse serviço e não avaliei ou ativo
+            const contratoExistente = contratos.find(c => c.servicoId === s.id && c.contratanteNome === (meuNome || "Usuário Local"));
+            const jaContratado = !!contratoExistente;
+            const statusContrato = contratoExistente ? (contratoExistente.avaliado ? "finalizado" : "contratado") : null;
+            html += `
+                <div class="servico-item">
+                    <div class="servico-titulo">${escapeHtml(s.titulo)} <span class="preco">R$ ${s.preco}</span></div>
+                    <div class="descricao">${escapeHtml(s.descricao.substring(0, 100))}</div>
+                    <div class="prestador">🧑 ${escapeHtml(s.prestadorNome)} • ${s.categoria} • ⭐ ${s.avaliacaoMedia || "novo"} (${s.totalAvaliacoes})</div>
+                    ${!jaContratado ? `<div class="contratar-area"><button class="btn-small btn-primary" data-id="${s.id}" data-acao="contratar">➕ Contratar serviço</button></div>` : `<div class="badge-contratado">✅ ${statusContrato === "finalizado" ? "Trabalho concluído e avaliado" : "Serviço contratado (aguardando avaliação/finalização)"}</div>`}
+                </div>
+            `;
+        }
+        servicosDisponiveisList.innerHTML = html;
+        document.querySelectorAll('[data-acao="contratar"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                if (confirm("Deseja solicitar este serviço? O prestador será notificado (simulação local).")) {
+                    contratarServico(id);
+                }
+            });
+        });
+    }
+    
+    // render meus contratos (contratante) + avaliações recebidas como prestador
+    function renderizarMeusContratosEAvaliacoes() {
+        const meuNomeAtual = meuNome || "Usuário Local";
+        // contratos onde sou contratante
+        const meusContratos = contratos.filter(c => c.contratanteNome === meuNomeAtual);
+        if (meusContratos.length === 0) {
+            meusContratosList.innerHTML = `<div style="color:#9bbc9b;">Nenhum contrato ainda. Contrate um serviço ao lado.</div>`;
+        } else {
+            let htmlCont = '';
+            for (let c of meusContratos) {
+                const servico = servicos.find(s => s.id === c.servicoId);
+                const nomeServico = servico ? servico.titulo : "Serviço removido";
+                const prestadorNome = servico ? servico.prestadorNome : "desconhecido";
+                if (!c.avaliado) {
+                    htmlCont += `
+                        <div class="servico-item" style="border-left-color:#ff9800;">
+                            <strong>📌 ${escapeHtml(nomeServico)}</strong> com ${escapeHtml(prestadorNome)}<br>
+                            <small>Contratado em ${c.dataContrato}</small>
+                            <div style="margin-top: 8px;">
+                                <button class="btn-small" data-id="${c.id}" data-acao="avaliar">⭐ Avaliar serviço (${c.status})</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    htmlCont += `
+                        <div class="servico-item">
+                            <strong>✓ ${escapeHtml(nomeServico)}</strong> (${escapeHtml(prestadorNome)})<br>
+                            <small>Avaliação: ${c.avaliacaoNota} estrelas - "${escapeHtml(c.avaliacaoComentario || '')}"</small>
+                        </div>
+                    `;
+                }
+            }
+            meusContratosList.innerHTML = htmlCont;
+            document.querySelectorAll('[data-acao="avaliar"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const contratoId = btn.getAttribute('data-id');
+                    const contrato = contratos.find(cc => cc.id === contratoId);
+                    if (!contrato || contrato.avaliado) { alert("Já avaliado"); return; }
+                    const nota = prompt("Dê uma nota de 1 a 5 estrelas para este serviço:", "5");
+                    if (nota === null) return;
+                    const notaNum = parseInt(nota);
+                    if (isNaN(notaNum) || notaNum < 1 || notaNum > 5) {
+                        alert("Nota inválida, use 1 a 5.");
+                        return;
+                    }
+                    const comentario = prompt("Comentário opcional (melhore a comunidade):", "Ótimo profissional!");
+                    avaliarContrato(contratoId, notaNum, comentario || "Sem comentário");
+                });
+            });
+        }
+        
+        // avaliações recebidas como prestador (serviços que prestei e foram avaliados)
+        const meusServicosIds = servicos.filter(s => s.prestadorId === meuId).map(s => s.id);
+        const contratosRecebidos = contratos.filter(c => meusServicosIds.includes(c.servicoId) && c.avaliado === true);
+        if (contratosRecebidos.length === 0) {
+            minhasAvaliacoesRecebidas.innerHTML = `<div style="color:#9bbc9b;">Nenhuma avaliação recebida ainda. Ofereça serviços e incentive clientes a avaliar.</div>`;
+        } else {
+            let htmlRec = '';
+            for (let cr of contratosRecebidos) {
+                const serv = servicos.find(s => s.id === cr.servicoId);
+                htmlRec += `<div class="consulta-item" style="background:#f5f9f0; padding:8px; border-radius:20px; margin-bottom:6px;">
+                    <strong>${escapeHtml(serv?.titulo || 'serviço')}</strong> – avaliado por ${escapeHtml(cr.contratanteNome)}<br>
+                    ⭐ ${cr.avaliacaoNota}/5 – "${escapeHtml(cr.avaliacaoComentario || '')}"
+                </div>`;
+            }
+            minhasAvaliacoesRecebidas.innerHTML = htmlRec;
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m){
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Eventos
+    btnOfertar.addEventListener('click', ofertarServico);
+    filtroCategoria.addEventListener('change', () => renderizarServicosDisponiveis());
+    
+    // Inicialização
+    carregarDados();
+    window.addEventListener('beforeunload', () => { salvarTudo(); });
+</script>
+</body>
+</html>

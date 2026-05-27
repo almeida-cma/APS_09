@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>UberCarona | Caronas Universitárias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e8f0fe 0%, #d4e0f0 100%);
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #1a5f7a, #0e3d5c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #2c5a6e;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .badge-university {
+            background: #cde3f0;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0, 32, 64, 0.12);
+            padding: 1.5rem 1.3rem;
+            border: 1px solid rgba(30, 100, 130, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f6e8c;
+            border-left: 5px solid #2c9faf;
+            padding-left: 14px;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c6e7e;
+            font-size: 0.85rem;
+        }
+
+        input, select, textarea {
+            background: #fefef9;
+            border: 1px solid #c5d9e5;
+            border-radius: 24px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #2c9faf;
+            box-shadow: 0 0 0 3px rgba(44, 159, 175, 0.2);
+        }
+
+        .btn {
+            background: #2787a0;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .btn-primary {
+            background: #1f6e8c;
+        }
+
+        .btn-primary:hover {
+            background: #15566e;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1f6e8c;
+            color: #1f6e8c;
+        }
+
+        .btn-small {
+            padding: 5px 14px;
+            font-size: 0.75rem;
+            width: auto;
+            margin-top: 0;
+        }
+
+        .caronas-item, .carona-item {
+            background: #fafdff;
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 14px;
+            border-left: 6px solid #3eb5c7;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .rota-titulo {
+            font-weight: 800;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .info-custo {
+            background: #e7f2f5;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .descricao {
+            font-size: 0.8rem;
+            color: #4e6f7e;
+            margin: 6px 0;
+        }
+
+        .motorista {
+            font-size: 0.7rem;
+            background: #e2edf2;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 40px;
+        }
+
+        .avaliacao-estrelas {
+            display: flex;
+            gap: 3px;
+            margin-top: 6px;
+            align-items: center;
+        }
+
+        .star {
+            color: #ddd;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .star-active {
+            color: #ffb74d;
+        }
+
+        .star-selected {
+            color: #ff9800;
+        }
+
+        .scrol-list {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #4f7f92;
+            margin-top: 20px;
+        }
+
+        .badge-vaga {
+            background: #c8e6e0;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.7rem;
+        }
+
+        hr {
+            margin: 12px 0;
+            border-color: #d0e3ec;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🚗 UberCarona <span>🎓</span></h1>
+        <p>Carona compartilhada • Rotas • Horários • Divisão de custos • Avaliações</p>
+        <div class="badge-university">🏛️ Universidade Federal do Campus Central • Região Universitária</div>
+    </div>
+
+    <div class="dashboard">
+        <!-- CARD 1: OFERECER CARONA (MOTORISTA) -->
+        <div class="card">
+            <h2>🚙 Oferecer carona</h2>
+            <div class="form-group">
+                <label>👤 Seu nome</label>
+                <input type="text" id="motoristaNome" placeholder="Ex: João Silva" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>📍 Rota (origem → destino)</label>
+                <input type="text" id="rota" placeholder="Ex: Centro → Campus UFSC / Bairro Universitário">
+            </div>
+            <div class="form-group">
+                <label>🕒 Horário de saída</label>
+                <input type="time" id="horarioSaida">
+            </div>
+            <div class="form-group">
+                <label>👥 Vagas disponíveis</label>
+                <input type="number" id="vagas" min="1" max="4" value="2">
+            </div>
+            <div class="form-group">
+                <label>💰 Valor sugerido por passageiro (R$)</label>
+                <input type="number" id="custoPorPessoa" step="0.5" placeholder="Ex: 5.00">
+            </div>
+            <div class="form-group">
+                <label>📝 Observações (ponto de encontro, etc)</label>
+                <textarea id="obsMotorista" rows="2" placeholder="Ex: Saída do portão principal"></textarea>
+            </div>
+            <button id="btnOfertarCarona" class="btn btn-primary">➕ Publicar carona</button>
+            
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 1rem;">📌 Minhas caronas oferecidas</h3>
+                <div id="minhasCaronasList" class="scrol-list" style="max-height: 220px;">
+                    <div style="color:#9abfcf;">Nenhuma carona publicada</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: BUSCAR CARONAS (PASSAGEIRO) -->
+        <div class="card">
+            <h2>🔍 Caronas disponíveis</h2>
+            <div class="form-group">
+                <label>🎯 Filtrar por rota (palavra-chave)</label>
+                <input type="text" id="filtroRota" placeholder="Ex: Centro, Campus, Bairro...">
+            </div>
+            <div id="caronasDisponiveisList" class="scrol-list" style="max-height: 400px;">
+                <div style="color:#9abfcf; text-align:center;">Carregando caronas...</div>
+            </div>
+        </div>
+
+        <!-- CARD 3: MINHAS VIAGENS + AVALIAÇÕES -->
+        <div class="card">
+            <h2>📋 Minhas viagens & reputação</h2>
+            <div style="margin-bottom: 12px; background:#e5f1f5; border-radius: 24px; padding: 8px; text-align:center;">
+                ⭐ Sistema de avaliação: motoristas e passageiros avaliam após a viagem.
+            </div>
+            <h3 style="font-size: 0.95rem;">✅ Como passageiro (viagens que reservei)</h3>
+            <div id="minhasReservasList" class="scrol-list" style="max-height: 200px;">
+                <div style="color:#9abfcf;">Nenhuma viagem reservada</div>
+            </div>
+            <hr>
+            <h3 style="font-size: 0.95rem;">⭐ Minhas avaliações recebidas (como motorista)</h3>
+            <div id="avaliacoesRecebidasList" class="scrol-list" style="max-height: 150px;">
+                <div style="color:#9abfcf;">Aguardando avaliações</div>
+            </div>
+            <hr>
+            <div style="font-size: 0.75rem; background:#f4fafd; border-radius: 20px; padding: 8px; margin-top: 8px;">
+                💰 Divisão de custos justa: cada passageiro paga o valor indicado. Motorista não paga.
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        🗺️ Dados salvos localmente • Economize, compartilhe e avalie • Caronas Universitárias
+    </div>
+</div>
+
+<script>
+    // Estruturas: caronas, reservas, avaliações
+    let caronas = [];          // { id, motoristaNome, motoristaId, rota, horario, vagas, custoPorPessoa, observacao, status, avaliacaoMedia, totalAvaliacoes }
+    let reservas = [];        // { id, caronaId, passageiroNome, passageiroId, dataReserva, status, avaliadoMotorista, notaMotorista, comentarioMotorista, avaliadoPassageiro, notaPassageiro, comentarioPassageiro }
+    
+    const STORAGE_KEY = 'caronasUniversitarias';
+    
+    // Usuário local (simula quem está usando o app)
+    let meuId = localStorage.getItem('caronaUserId');
+    if (!meuId) {
+        meuId = 'user_' + Math.floor(Math.random() * 100000);
+        localStorage.setItem('caronaUserId', meuId);
+    }
+    let meuNome = localStorage.getItem('caronaMeuNome') || '';
+    
+    // Elementos
+    const motoristaNomeInput = document.getElementById('motoristaNome');
+    const rotaInput = document.getElementById('rota');
+    const horarioSaida = document.getElementById('horarioSaida');
+    const vagasInput = document.getElementById('vagas');
+    const custoPorPessoa = document.getElementById('custoPorPessoa');
+    const obsMotorista = document.getElementById('obsMotorista');
+    const btnOfertarCarona = document.getElementById('btnOfertarCarona');
+    const minhasCaronasList = document.getElementById('minhasCaronasList');
+    const caronasDisponiveisList = document.getElementById('caronasDisponiveisList');
+    const minhasReservasList = document.getElementById('minhasReservasList');
+    const avaliacoesRecebidasList = document.getElementById('avaliacoesRecebidasList');
+    const filtroRota = document.getElementById('filtroRota');
+    
+    // funções auxiliares
+    function salvarDados() {
+        const data = {
+            caronas: caronas,
+            reservas: reservas,
+            meuId: meuId,
+            meuNome: meuNome
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    
+    function carregarDados() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+            // dados de exemplo
+            const hoje = new Date().toISOString().slice(0,10);
+            caronas = [
+                { id: "c1", motoristaNome: "Ana Paula", motoristaId: "motor_ana", rota: "Centro → Campus UFSC", horario: "07:30", vagas: 2, custoPorPessoa: 4.5, observacao: "Saída do supermercado", status: "ativa", avaliacaoMedia: 4.8, totalAvaliacoes: 4 },
+                { id: "c2", motoristaNome: "Carlos Mendes", motoristaId: "motor_carlos", rota: "Bairro Universitário → Campus", horario: "12:15", vagas: 3, custoPorPessoa: 3.0, observacao: "Ponto no posto Ipiranga", status: "ativa", avaliacaoMedia: 4.5, totalAvaliacoes: 2 },
+                { id: "c3", motoristaNome: "Mariana Lopes", motoristaId: "motor_mariana", rota: "Zona Sul → Campus", horario: "18:45", vagas: 1, custoPorPessoa: 6.0, observacao: "Volta noturna", status: "ativa", avaliacaoMedia: 5.0, totalAvaliacoes: 3 }
+            ];
+            reservas = [
+                { id: "r1", caronaId: "c1", passageiroNome: "Lucas (aluno)", passageiroId: "user_demo1", dataReserva: hoje, status: "concluida", avaliadoMotorista: true, notaMotorista: 5, comentarioMotorista: "Muito pontual!", avaliadoPassageiro: true, notaPassageiro: 5, comentarioPassageiro: "Ótimo motorista" }
+            ];
+            meuNome = "";
+        } else {
+            try {
+                const data = JSON.parse(raw);
+                caronas = data.caronas || [];
+                reservas = data.reservas || [];
+                meuId = data.meuId || meuId;
+                meuNome = data.meuNome || "";
+                if (motoristaNomeInput && meuNome) motoristaNomeInput.value = meuNome;
+            } catch(e) {}
+        }
+        if (motoristaNomeInput && !motoristaNomeInput.value && meuNome) motoristaNomeInput.value = meuNome;
+        renderizarMinhasCaronas();
+        renderizarCaronasDisponiveis();
+        renderizarMinhasReservasEAvaliacoes();
+    }
+    
+    // ofertar carona
+    function ofertarCarona() {
+        let motorista = motoristaNomeInput.value.trim();
+        if (!motorista) {
+            alert("Informe seu nome para oferecer carona");
+            return;
+        }
+        const rota = rotaInput.value.trim();
+        const horario = horarioSaida.value;
+        let vagas = parseInt(vagasInput.value);
+        const custo = parseFloat(custoPorPessoa.value);
+        const obs = obsMotorista.value.trim();
+        
+        if (!rota) { alert("Informe a rota"); return; }
+        if (!horario) { alert("Informe o horário"); return; }
+        if (isNaN(vagas) || vagas < 1) vagas = 1;
+        if (isNaN(custo) || custo <= 0) { alert("Informe um custo por pessoa válido"); return; }
+        
+        meuNome = motorista;
+        localStorage.setItem('caronaMeuNome', meuNome);
+        const novaCarona = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + "_" + Math.random(),
+            motoristaNome: motorista,
+            motoristaId: meuId,
+            rota: rota,
+            horario: horario,
+            vagas: vagas,
+            custoPorPessoa: custo,
+            observacao: obs,
+            status: "ativa",
+            avaliacaoMedia: 0,
+            totalAvaliacoes: 0
+        };
+        caronas.push(novaCarona);
+        salvarDados();
+        rotaInput.value = '';
+        horarioSaida.value = '';
+        vagasInput.value = '2';
+        custoPorPessoa.value = '';
+        obsMotorista.value = '';
+        renderizarMinhasCaronas();
+        renderizarCaronasDisponiveis();
+        alert("🚗 Carona publicada! Os passageiros poderão reservar.");
+    }
+    
+    // reservar carona (passageiro)
+    function reservarCarona(caronaId) {
+        const carona = caronas.find(c => c.id === caronaId);
+        if (!carona) return;
+        if (carona.vagas <= 0) {
+            alert("Infelizmente esta carona não tem mais vagas.");
+            return;
+        }
+        let passageiroNome = prompt("Seu nome para a reserva:", meuNome || "Visitante");
+        if (!passageiroNome) return;
+        meuNome = passageiroNome;
+        localStorage.setItem('caronaMeuNome', meuNome);
+        
+        // verificar se já reservou essa mesma carona
+        const jaReservou = reservas.some(r => r.caronaId === caronaId && r.passageiroId === meuId);
+        if (jaReservou) {
+            alert("Você já reservou esta carona!");
+            return;
+        }
+        
+        const novaReserva = {
+            id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + "_res",
+            caronaId: carona.id,
+            passageiroNome: passageiroNome,
+            passageiroId: meuId,
+            dataReserva: new Date().toISOString().slice(0,10),
+            status: "confirmada",
+            avaliadoMotorista: false,
+            notaMotorista: null,
+            comentarioMotorista: null,
+            avaliadoPassageiro: false,
+            notaPassageiro: null,
+            comentarioPassageiro: null
+        };
+        // reduzir vaga da carona
+        carona.vagas -= 1;
+        reservas.push(novaReserva);
+        salvarDados();
+        renderizarCaronasDisponiveis();
+        renderizarMinhasReservasEAvaliacoes();
+        renderizarMinhasCaronas();
+        alert(`✅ Reserva confirmada para ${carona.rota} às ${carona.horario}. Custo: R$ ${carona.custoPorPessoa}. Entre em contato com o motorista pela plataforma (simulação).`);
+    }
+    
+    // avaliar motorista (passageiro avalia o motorista após a viagem)
+    function avaliarMotorista(reservaId) {
+        const reserva = reservas.find(r => r.id === reservaId);
+        if (!reserva) return;
+        if (reserva.avaliadoMotorista) {
+            alert("Você já avaliou este motorista.");
+            return;
+        }
+        const nota = prompt("Avalie o motorista (1 a 5 estrelas):", "5");
+        if (nota === null) return;
+        const notaNum = parseInt(nota);
+        if (isNaN(notaNum) || notaNum < 1 || notaNum > 5) {
+            alert("Nota inválida. Use 1 a 5.");
+            return;
+        }
+        const comentario = prompt("Comentário sobre a viagem (opcional):", "Carona tranquila, motorista educado");
+        reserva.notaMotorista = notaNum;
+        reserva.comentarioMotorista = comentario || "Sem comentário";
+        reserva.avaliadoMotorista = true;
+        
+        // atualizar média do motorista (carona associada)
+        const carona = caronas.find(c => c.id === reserva.caronaId);
+        if (carona) {
+            const totalAntigo = carona.totalAvaliacoes || 0;
+            const mediaAntiga = carona.avaliacaoMedia || 0;
+            const novaMedia = (mediaAntiga * totalAntigo + notaNum) / (totalAntigo + 1);
+            carona.avaliacaoMedia = parseFloat(novaMedia.toFixed(2));
+            carona.totalAvaliacoes = totalAntigo + 1;
+        }
+        salvarDados();
+        renderizarMinhasReservasEAvaliacoes();
+        renderizarCaronasDisponiveis();
+        renderizarMinhasCaronas();
+        alert(`Avaliação registrada! Obrigado por contribuir com a comunidade.`);
+    }
+    
+    // avaliar passageiro (motorista avalia passageiro) - integrado nas minhas caronas oferecidas
+    function avaliarPassageiro(reservaId) {
+        const reserva = reservas.find(r => r.id === reservaId);
+        if (!reserva) return;
+        if (reserva.avaliadoPassageiro) {
+            alert("Este passageiro já foi avaliado.");
+            return;
+        }
+        const nota = prompt(`Avalie o passageiro ${reserva.passageiroNome} (1 a 5 estrelas):`, "5");
+        if (nota === null) return;
+        const notaNum = parseInt(nota);
+        if (isNaN(notaNum) || notaNum < 1 || notaNum > 5) {
+            alert("Nota inválida");
+            return;
+        }
+        const comentario = prompt("Comentário sobre o passageiro:", "Educado e pontual");
+        reserva.notaPassageiro = notaNum;
+        reserva.comentarioPassageiro = comentario || "Sem comentário";
+        reserva.avaliadoPassageiro = true;
+        salvarDados();
+        renderizarMinhasReservasEAvaliacoes();
+        renderizarMinhasCaronas();
+        alert(`Passageiro avaliado!`);
+    }
+    
+    // renderizar minhas caronas (motorista)
+    function renderizarMinhasCaronas() {
+        const minhas = caronas.filter(c => c.motoristaId === meuId);
+        if (minhas.length === 0) {
+            minhasCaronasList.innerHTML = `<div style="color:#9abfcf;">Você ainda não publicou caronas. Ofereça uma acima!</div>`;
+            return;
+        }
+        let html = '';
+        for (let c of minhas) {
+            const reservasDaCarona = reservas.filter(r => r.caronaId === c.id);
+            const passageirosInfo = reservasDaCarona.map(r => `${r.passageiroNome} (${r.avaliadoPassageiro ? '✓ avaliado' : '⏳ aguardando avaliação'})`).join(', ');
+            html += `
+                <div class="caronas-item">
+                    <div class="rota-titulo">📍 ${escapeHtml(c.rota)} <span class="info-custo">R$ ${c.custoPorPessoa}/pessoa</span></div>
+                    <div>🕒 ${c.horario} | 👥 ${c.vagas} vaga(s) restante(s)</div>
+                    <div class="descricao">📝 ${escapeHtml(c.observacao || 'Sem observações')}</div>
+                    <div class="motorista">⭐ ${c.avaliacaoMedia || "novo"} (${c.totalAvaliacoes} aval.)</div>
+                    ${reservasDaCarona.length > 0 ? `<div style="font-size:0.7rem; margin-top:6px;">🧑‍🤝‍🧑 Passageiros: ${escapeHtml(passageirosInfo)}</div>` : ''}
+                    ${reservasDaCarona.filter(r => !r.avaliadoPassageiro).map(r => `<button class="btn-small btn-outline" data-reserva="${r.id}" data-acao="avaliarPassageiro">⭐ Avaliar passageiro ${r.passageiroNome}</button>`).join('')}
+                    <button class="btn-small" style="background:#e0eef5; margin-top:5px;" data-id="${c.id}" data-acao="excluirCarona">🗑️ Encerrar/Remover carona</button>
+                </div>
+            `;
+        }
+        minhasCaronasList.innerHTML = html;
+        document.querySelectorAll('[data-acao="excluirCarona"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                if (confirm("Remover esta carona? As reservas serão canceladas.")) {
+                    caronas = caronas.filter(c => c.id !== id);
+                    reservas = reservas.filter(r => r.caronaId !== id);
+                    salvarDados();
+                    renderizarMinhasCaronas();
+                    renderizarCaronasDisponiveis();
+                    renderizarMinhasReservasEAvaliacoes();
+                }
+            });
+        });
+        document.querySelectorAll('[data-acao="avaliarPassageiro"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const reservaId = btn.getAttribute('data-reserva');
+                avaliarPassageiro(reservaId);
+            });
+        });
+    }
+    
+    // renderizar caronas disponíveis (para passageiro)
+    function renderizarCaronasDisponiveis() {
+        const filtroTexto = filtroRota.value.trim().toLowerCase();
+        let disponiveis = caronas.filter(c => c.motoristaId !== meuId && c.status === "ativa" && c.vagas > 0);
+        if (filtroTexto) {
+            disponiveis = disponiveis.filter(c => c.rota.toLowerCase().includes(filtroTexto));
+        }
+        if (disponiveis.length === 0) {
+            caronasDisponiveisList.innerHTML = `<div style="color:#9abfcf;">Nenhuma carona compatível no momento. Volte mais tarde ou publique uma carona!</div>`;
+            return;
+        }
+        let html = '';
+        for (let c of disponiveis) {
+            const jaReservada = reservas.some(r => r.caronaId === c.id && r.passageiroId === meuId);
+            html += `
+                <div class="carona-item">
+                    <div class="rota-titulo">🚗 ${escapeHtml(c.rota)} <span class="info-custo">💰 R$ ${c.custoPorPessoa}</span></div>
+                    <div>⏰ ${c.horario} | 👥 ${c.vagas} vagas</div>
+                    <div class="descricao">${escapeHtml(c.observacao || '')}</div>
+                    <div class="motorista">👤 ${escapeHtml(c.motoristaNome)} • ⭐ ${c.avaliacaoMedia || "novo"} (${c.totalAvaliacoes})</div>
+                    ${!jaReservada ? `<button class="btn-small btn-primary" data-id="${c.id}" style="margin-top:8px;">➕ Reservar carona</button>` : `<span class="badge-vaga">✅ Você já reservou esta carona</span>`}
+                </div>
+            `;
+        }
+        caronasDisponiveisList.innerHTML = html;
+        document.querySelectorAll('[data-id]').forEach(btn => {
+            if (btn.innerText.includes("Reservar")) {
+                btn.addEventListener('click', (e) => {
+                    const id = btn.getAttribute('data-id');
+                    reservarCarona(id);
+                });
+            }
+        });
+    }
+    
+    // renderizar minhas reservas + avaliações recebidas como motorista
+    function renderizarMinhasReservasEAvaliacoes() {
+        const minhasReservas = reservas.filter(r => r.passageiroId === meuId);
+        if (minhasReservas.length === 0) {
+            minhasReservasList.innerHTML = `<div style="color:#9abfcf;">Você ainda não reservou nenhuma carona. Encontre caronas acima!</div>`;
+        } else {
+            let html = '';
+            for (let r of minhasReservas) {
+                const carona = caronas.find(c => c.id === r.caronaId);
+                const infoCarona = carona ? `${carona.rota} (${carona.horario})` : "Carona indisponível";
+                if (!r.avaliadoMotorista) {
+                    html += `
+                        <div class="carona-item" style="border-left-color:#ffa559;">
+                            <strong>${escapeHtml(infoCarona)}</strong> com ${carona ? carona.motoristaNome : '?'}<br>
+                            <small>Reservada em ${r.dataReserva} • Custo: R$ ${carona?.custoPorPessoa || '?'}</small>
+                            <div><button class="btn-small" data-reserva="${r.id}" data-avaliar="motorista">⭐ Avaliar motorista</button></div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="carona-item">
+                            ✅ ${escapeHtml(infoCarona)} – motorista avaliado (${r.notaMotorista}★) "${escapeHtml(r.comentarioMotorista?.substring(0,50) || '')}"
+                        </div>
+                    `;
+                }
+            }
+            minhasReservasList.innerHTML = html;
+            document.querySelectorAll('[data-avaliar="motorista"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const reservaId = btn.getAttribute('data-reserva');
+                    avaliarMotorista(reservaId);
+                });
+            });
+        }
+        
+        // avaliações recebidas como motorista (passageiros avaliaram minhas caronas)
+        const minhasCaronasIds = caronas.filter(c => c.motoristaId === meuId).map(c => c.id);
+        const avaliacoesRecebidas = reservas.filter(r => minhasCaronasIds.includes(r.caronaId) && r.avaliadoMotorista === true);
+        if (avaliacoesRecebidas.length === 0) {
+            avaliacoesRecebidasList.innerHTML = `<div style="color:#9abfcf;">Nenhuma avaliação recebida ainda. Ofereça caronas de qualidade!</div>`;
+        } else {
+            let htmlRec = '';
+            for (let av of avaliacoesRecebidas) {
+                const caronaRef = caronas.find(c => c.id === av.caronaId);
+                htmlRec += `<div style="background:#f2f8fc; border-radius:16px; padding:8px; margin-bottom:8px;">
+                    🧑‍🎓 ${escapeHtml(av.passageiroNome)} avaliou: ${av.notaMotorista}★ – "${escapeHtml(av.comentarioMotorista || '')}"<br>
+                    <small>Rota: ${caronaRef?.rota || '?'}</small>
+                </div>`;
+            }
+            avaliacoesRecebidasList.innerHTML = htmlRec;
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m){
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Eventos
+    btnOfertarCarona.addEventListener('click', ofertarCarona);
+    filtroRota.addEventListener('input', () => renderizarCaronasDisponiveis());
+    
+    // Inicialização
+    carregarDados();
+    window.addEventListener('beforeunload', () => salvarDados());
+</script>
+</body>
+</html>

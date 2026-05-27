@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestão de Projetos | Central de Recursos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Cabeçalho */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #1a3c5e, #2b5c8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.05);
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Grid cards */
+        .section {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px -8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .section h2 {
+            font-size: 1.7rem;
+            border-left: 7px solid #ff914d;
+            padding-left: 1rem;
+            margin-bottom: 1.4rem;
+            color: #1f3b4c;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.3rem;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0,0,0,0.2);
+            border-color: #ff914d40;
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            background: #f0f4fa;
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.2rem;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: #1e4663;
+        }
+
+        .card-content p {
+            font-size: 0.8rem;
+            color: #5a6e7c;
+        }
+
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .badge {
+            background: #eef2fa;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2a5f8a;
+            margin-left: 0.6rem;
+        }
+
+        /* rodapé especial */
+        .footer-links {
+            background: #1f2e3a;
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            margin-top: 2rem;
+            color: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-feira {
+            background: #ff914d;
+            border-radius: 3rem;
+            padding: 0.7rem 1.5rem;
+            transition: 0.2s;
+        }
+
+        .footer-feira a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-feira:hover {
+            background: #e07c3c;
+            transform: scale(1.02);
+        }
+
+        .form-link {
+            background: #2c5a7a;
+            border-radius: 3rem;
+            padding: 0.7rem 1.5rem;
+        }
+
+        .form-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-note {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #3a5a72;
+        }
+
+        hr {
+            margin: 0.5rem 0 1rem;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ff914d80, transparent);
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 1rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .card { padding: 0.9rem; }
+            .footer-links { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📌 Gestão de Projetos</h1>
+        <p>Central de recursos · metodologias ágeis · análise de riscos · MVPs educacionais</p>
+    </div>
+
+    <!-- 1) TEMA 9 -->
+    <div class="section">
+        <h2>📘 1. Conteúdo teórico</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">📖</div>
+                <div class="card-content">
+                    <h3>Tema 9 – Gestão Ágil / projetos</h3>
+                    <p>Aprofunde conceitos e boas práticas</p>
+                </div>
+                <a href="tema9.html" target="_blank" class="card-link" style="justify-content: flex-end;">
+                    <span class="badge">Nova aba ➚</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2) MATRIZ DE RISCO + SCRUM + TRELLO + PDFs apoio -->
+    <div class="section">
+        <h2>⚠️📊 2. Riscos, Scrum e ferramentas</h2>
+        <div class="cards-grid">
+            <!-- Matriz de risco -->
+            <div class="card">
+                <div class="card-icon">⚠️</div>
+                <div class="card-content">
+                    <h3>Matriz de Risco</h3>
+                    <p>Probabilidade × Impacto – análise visual</p>
+                </div>
+                <a href="matriz_risco.html" target="_blank" class="card-link">
+                    <span class="badge">Abrir matriz ➚</span>
+                </a>
+            </div>
+            <!-- SCRUM (para memorizar) imagem PNG -->
+            <div class="card">
+                <div class="card-icon">🔄</div>
+                <div class="card-content">
+                    <h3>SCRUM (memorizar)</h3>
+                    <p>Infográfico / pôster visual</p>
+                </div>
+                <a href="SCRUM.png" target="_blank" class="card-link">
+                    <span class="badge">Visualizar PNG ➚</span>
+                </a>
+            </div>
+            <!-- Apoio SCRUM pdf -->
+            <div class="card">
+                <div class="card-icon">📑</div>
+                <div class="card-content">
+                    <h3>Apoio SCRUM</h3>
+                    <p>Guia prático (PDF)</p>
+                </div>
+                <a href="SCRUM.pdf" target="_blank" class="card-link">
+                    <span class="badge">Baixar / ler ➚</span>
+                </a>
+            </div>
+            <!-- Ferramenta Trello PDF -->
+            <div class="card">
+                <div class="card-icon">📌</div>
+                <div class="card-content">
+                    <h3>Ferramenta Trello</h3>
+                    <p>Como organizar projetos com Kanban</p>
+                </div>
+                <a href="Trello.pdf" target="_blank" class="card-link">
+                    <span class="badge">PDF Trello ➚</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3) EXEMPLOS MVP DE APLICATIVOS (5 projetos) -->
+    <div class="section">
+        <h2>📱 3. Exemplos MVP · Produto Mínimo Viável</h2>
+        <div class="cards-grid">
+            <!-- Carona compartilhada -->
+            <div class="card">
+                <div class="card-icon">🚗</div>
+                <div class="card-content">
+                    <h3>Carona Compartilhada</h3>
+                    <p>MVP para conectar motoristas e passageiros</p>
+                </div>
+                <a href="caronas.html" target="_blank" class="card-link">
+                    <span class="badge">Ver protótipo ➚</span>
+                </a>
+            </div>
+            <!-- Fila Posto Saúde -->
+            <div class="card">
+                <div class="card-icon">🏥</div>
+                <div class="card-content">
+                    <h3>Fila Posto Saúde</h3>
+                    <p>Gestão de senhas e tempo de espera</p>
+                </div>
+                <a href="filas.html" target="_blank" class="card-link">
+                    <span class="badge">Ver solução ➚</span>
+                </a>
+            </div>
+            <!-- Lembretes para idosos -->
+            <div class="card">
+                <div class="card-icon">👵</div>
+                <div class="card-content">
+                    <h3>Lembretes para Idosos</h3>
+                    <p>Medicamentos / compromissos</p>
+                </div>
+                <a href="idosos.html" target="_blank" class="card-link">
+                    <span class="badge">Acessar MVP ➚</span>
+                </a>
+            </div>
+            <!-- Conectando vizinhos (microfreelas) -->
+            <div class="card">
+                <div class="card-icon">🏘️</div>
+                <div class="card-content">
+                    <h3>Conectando Vizinhos</h3>
+                    <p>Microfreelas e pequenos serviços</p>
+                </div>
+                <a href="microfreelas.html" target="_blank" class="card-link">
+                    <span class="badge">Ver proposta ➚</span>
+                </a>
+            </div>
+            <!-- JF Colaborativa / urbano.html -->
+            <div class="card">
+                <div class="card-icon">🌆</div>
+                <div class="card-content">
+                    <h3>JF Colaborativa</h3>
+                    <p>Plataforma urbana colaborativa</p>
+                </div>
+                <a href="urbano.html" target="_blank" class="card-link">
+                    <span class="badge">Explorar ➚</span>
+                </a>
+            </div>
+        </div>
+        <hr>
+        <p style="font-size: 0.85rem; color: #2c5a6e; margin-top: 0.5rem;">💡 *MVP (Produto Mínimo Viável) – versão inicial com funcionalidades essenciais para testar hipóteses.*</p>
+    </div>
+
+    <!-- Rodapé duplo: Feira de Amostras + Formulário de atividades -->
+    <div class="footer-links">
+        <div class="footer-feira">
+            <a href="https://almeida-cma.github.io/feira/" target="_blank">
+                🎪 Feira de Amostras de Aplicações → Ir para mostra de projetos
+            </a>
+        </div>
+        <div class="form-link">
+            <a href="https://forms.gle/T9QSe3PyEpru3t538" target="_blank">
+                📬 Envio de atividades → Clique aqui para enviar seus trabalhos
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        🔗 Todos os links abrem em nova aba. Recursos educacionais – Gestão de Projetos | Métodos ágeis, riscos e MVPs.
+    </div>
+</div>
+
+<!-- Observação: Os arquivos solicitados (tema9.html, matriz_risco.html, SCRUM.png, SCRUM.pdf, Trello.pdf,
+     caronas.html, filas.html, idosos.html, microfreelas.html, urbano.html) devem estar no mesmo diretório que este index.html.
+     Caso algum não exista, substitua por conteúdo personalizado. Esta página é o hub central. -->
+</body>
+</html>

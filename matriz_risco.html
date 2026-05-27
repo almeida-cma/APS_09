@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Riscos em Projetos | Matriz Probabilidade × Impacto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 span {
+            background: #ff6b35;
+            padding: 0 12px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Cards explicativos melhorados */
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .concept-card h3 {
+            color: #2c5364;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-left: 5px solid #ff6b35;
+            padding-left: 15px;
+        }
+
+        .concept-card p {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background: #f0f4f8;
+            padding: 12px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .formula-large {
+            background: #1e3c72;
+            color: white;
+            font-size: 1.3rem;
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 15px 0;
+        }
+
+        /* Matriz de Risco Interativa */
+        .matrix-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .matrix-section h2 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .matrix-subtitle {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .explanation-box {
+            background: #e8f4fd;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #ff6b35;
+        }
+
+        .explanation-box h4 {
+            color: #1e3c72;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .formula-step {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        /* Matriz 5x5 */
+        .risk-matrix {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 600px;
+        }
+
+        .matrix-table th, .matrix-table td {
+            border: 1px solid #ddd;
+            padding: 12px 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .matrix-table th {
+            background: #2c3e50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .matrix-table th:first-child {
+            background: #34495e;
+        }
+
+        .matrix-table td {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .matrix-table td:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px #ff6b35;
+        }
+
+        /* Cores da matriz - melhor contraste */
+        .risk-low { background: #a5d6a7; color: #1b5e20; }
+        .risk-medium { background: #fff59d; color: #f57f17; }
+        .risk-high { background: #ffab91; color: #bf360c; }
+        .risk-extreme { background: #ef9a9a; color: #b71c1c; font-weight: bold; }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 25px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+        }
+
+        /* Painel de risco selecionado */
+        .selected-risk-panel {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            border-left: 6px solid #ff6b35;
+        }
+
+        .risk-detail {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .risk-stat {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .risk-stat .label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .risk-stat .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .risk-response {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .risk-response h4 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        /* Lista de riscos exemplo */
+        .examples-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .risk-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .risk-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #ccc;
+        }
+
+        .risk-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .risk-item h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .risk-badge.baixo { background: #a5d6a7; color: #1b5e20; }
+        .risk-badge.medio { background: #fff59d; color: #f57f17; }
+        .risk-badge.alto { background: #ffab91; color: #bf360c; }
+        .risk-badge.extremo { background: #ef9a9a; color: #b71c1c; }
+
+        /* Simulador interativo */
+        .simulator {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 25px;
+            padding: 30px;
+            color: white;
+        }
+
+        .simulator h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .slider-group {
+            margin: 20px 0;
+        }
+
+        .slider-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff6b35;
+            cursor: pointer;
+        }
+
+        .simulator-result {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .risk-level-display {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .matrix-table td, .matrix-table th { padding: 6px 4px; font-size: 0.7rem; }
+        }
+
+        .highlight {
+            background: #ff6b3520;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚠️ <span>Análise de Riscos</span> em Projetos</h1>
+        <p>Entenda a relação: Probabilidade × Impacto = Nível de Risco | Matriz 5x5 interativa</p>
+    </div>
+
+    <!-- Cards conceituais com explicação clara da relação -->
+    <div class="concepts-grid">
+        <div class="concept-card">
+            <h3>📊 Probabilidade</h3>
+            <p>É a <strong>chance</strong> de um evento de risco realmente acontecer. Varia de <strong>Muito Baixa (10%)</strong> até <strong>Muito Alta (90%)</strong>.</p>
+            <div class="formula">P = 10% | 30% | 50% | 70% | 90%</div>
+            <p style="margin-top:10px; font-size:0.85rem;">Exemplo: "Há 70% de chance do fornecedor atrasar a entrega"</p>
+        </div>
+        <div class="concept-card">
+            <h3>💥 Impacto</h3>
+            <p>É a <strong>consequência</strong> se o risco se materializar. Mede o dano em prazo, custo, qualidade ou escopo.</p>
+            <div class="formula">I = 1 (Mínimo) até 5 (Catastrófico)</div>
+            <p style="margin-top:10px; font-size:0.85rem;">Exemplo: "Atraso de 1 semana (impacto 3) ou perda total do projeto (impacto 5)"</p>
+        </div>
+        <div class="concept-card">
+            <h3>🎯 Nível de Risco (FÓRMULA)</h3>
+            <div class="formula-large">⚠️ NÍVEL = PROBABILIDADE × IMPACTO ⚠️</div>
+            <p>Multiplica-se o <strong>nível da probabilidade (1 a 5)</strong> pelo <strong>nível do impacto (1 a 5)</strong>.</p>
+            <div class="formula">Score final: de 1 (baixíssimo) até 25 (extremamente crítico)</div>
+        </div>
+    </div>
+
+    <!-- Explicação detalhada da relação -->
+    <div class="matrix-section">
+        <div class="explanation-box">
+            <h4>🔍 Como funciona a classificação? Probabilidade × Impacto = Nível de Risco</h4>
+            <p>A matriz abaixo mostra a <strong>multiplicação</strong> entre os níveis de Probabilidade (linhas) e Impacto (colunas).</p>
+            <div class="formula-step">
+                <strong>Exemplo 1:</strong> Probabilidade Média (3) × Impacto Médio (3) = Score 9 → Risco <span class="highlight">Médio (amarelo)</span>
+            </div>
+            <div class="formula-step">
+                <strong>Exemplo 2:</strong> Probabilidade Alta (4) × Impacto Muito Alto (5) = Score 20 → Risco <span class="highlight">Extremo (vermelho)</span>
+            </div>
+            <div class="formula-step">
+                <strong>Exemplo 3:</strong> Probabilidade Muito Baixa (1) × Impacto Baixo (2) = Score 2 → Risco <span class="highlight">Baixo (verde)</span>
+            </div>
+            <p style="margin-top: 12px;"><strong>💡 Regra prática:</strong> Quanto maior o score, maior a prioridade para agir! Riscos extremos exigem ação imediata (EVITAR).</p>
+        </div>
+
+        <h2>📐 Matriz de Probabilidade × Impacto (5x5)</h2>
+        <p class="matrix-subtitle">Clique em qualquer célula para ver a classificação do risco e estratégias de resposta</p>
+
+        <div class="risk-matrix">
+            <table class="matrix-table" id="riskMatrix">
+                <thead>
+                    <tr>
+                        <th>Probabilidade ↓ / Impacto →</th>
+                        <th>1<br>Muito Baixo</th>
+                        <th>2<br>Baixo</th>
+                        <th>3<br>Médio</th>
+                        <th>4<br>Alto</th>
+                        <th>5<br>Muito Alto</th>
+                    </tr>
+                </thead>
+                <tbody id="matrixBody"></tbody>
+            </table>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#a5d6a7;"></div><span>🟢 Baixo (Score 1-4)<br>Monitorar apenas</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#fff59d;"></div><span>🟡 Médio (Score 5-9)<br>Mitigar / Reduzir</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#ffab91;"></div><span>🟠 Alto (Score 10-16)<br>Mitigar fortemente</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#ef9a9a;"></div><span>🔴 Extremo (Score 17-25)<br>EVITAR ou Cancelar</span></div>
+        </div>
+
+        <!-- Painel de detalhe do risco selecionado -->
+        <div class="selected-risk-panel" id="riskPanel">
+            <h3>📌 Detalhamento do Risco Selecionado</h3>
+            <div class="risk-detail">
+                <div class="risk-stat"><div class="label">📈 Probabilidade</div><div class="value" id="detailProb">-</div></div>
+                <div class="risk-stat"><div class="label">💥 Impacto</div><div class="value" id="detailImpact">-</div></div>
+                <div class="risk-stat"><div class="label">🧮 Score (P × I)</div><div class="value" id="detailScore">-</div></div>
+                <div class="risk-stat"><div class="label">🏷️ Classificação</div><div class="value" id="detailClass">-</div></div>
+            </div>
+            <div class="risk-response" id="detailResponse">
+                <h4>🎯 Estratégias de Resposta Recomendadas</h4>
+                <p id="responseText">Clique em uma célula da matriz para ver as estratégias</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exemplos de Riscos Reais -->
+    <div class="examples-section">
+        <h2>📋 Exemplos de Riscos em Projetos</h2>
+        <p>Clique em qualquer exemplo para visualizar sua posição na matriz e estratégias específicas</p>
+        <div class="risk-list" id="riskExamplesList"></div>
+    </div>
+
+    <!-- Simulador Interativo -->
+    <div class="simulator">
+        <h3>🎮 Simule seu próprio risco</h3>
+        <p>Ajuste os sliders e veja o nível de risco em tempo real (Probabilidade × Impacto)</p>
+        
+        <div class="slider-group">
+            <label>📈 Probabilidade: <span id="simProbVal">50%</span> → Nível: <span id="simProbLevel">3</span>/5</label>
+            <input type="range" id="simProbability" min="0" max="100" value="50">
+        </div>
+        <div class="slider-group">
+            <label>💥 Impacto: <span id="simImpactVal">3</span> → Nível: <span id="simImpactLevel">3</span>/5 (1=Mínimo, 5=Catastrófico)</label>
+            <input type="range" id="simImpact" min="1" max="5" step="1" value="3">
+        </div>
+        
+        <div class="simulator-result">
+            <div>📊 Cálculo: (Nível Probabilidade × Nível Impacto)</div>
+            <div class="risk-level-display" id="simRiskLevel">Risco Médio</div>
+            <div id="simRiskScore">Score: 9 (médio)</div>
+            <div id="simAdvice" style="margin-top: 10px;">🔧 Risco moderado. Implemente ações de mitigação.</div>
+        </div>
+    </div>
+
+    <footer>
+        🛡️ Gestão de Riscos - Baseado no PMBOK | Fórmula: Nível de Risco = Probabilidade (1-5) × Impacto (1-5) | Estratégias: Mitigar, Evitar, Transferir, Aceitar
+    </footer>
+</div>
+
+<script>
+    // Níveis de probabilidade e impacto
+    const probLevels = ['Muito Baixa (10%)', 'Baixa (30%)', 'Média (50%)', 'Alta (70%)', 'Muito Alta (90%)'];
+    const impactLevels = ['Muito Baixo (1)', 'Baixo (2)', 'Médio (3)', 'Alto (4)', 'Muito Alto (5)'];
+    const probValues = [1, 2, 3, 4, 5];
+    const impactValues = [1, 2, 3, 4, 5];
+    
+    // Função para obter classe CSS baseada no score
+    function getRiskClass(score) {
+        if (score <= 4) return 'risk-low';
+        if (score <= 9) return 'risk-medium';
+        if (score <= 16) return 'risk-high';
+        return 'risk-extreme';
+    }
+    
+    function getRiskLabel(score) {
+        if (score <= 4) return '🟢 BAIXO - Apenas monitorar';
+        if (score <= 9) return '🟡 MÉDIO - Mitigar / Reduzir';
+        if (score <= 16) return '🟠 ALTO - Mitigar fortemente ou Transferir';
+        return '🔴 EXTREMO - EVITAR ou Cancelar projeto';
+    }
+    
+    function getRiskResponse(probIdx, impactIdx) {
+        const score = (probIdx + 1) * (impactIdx + 1);
+        
+        if (score <= 4) {
+            return {
+                strategy: "✅ ACEITAR / MONITORAR",
+                text: "Risco baixo. Apenas monitore durante o projeto. Não requer ação ativa. Registre no log de riscos e revise mensalmente."
+            };
+        } else if (score <= 9) {
+            return {
+                strategy: "👀 MITIGAR / REDUZIR",
+                text: "Implemente ações para reduzir probabilidade ou impacto. Exemplos: treinamento da equipe, revisões semanais, plano de contingência simples, aumentar testes."
+            };
+        } else if (score <= 16) {
+            return {
+                strategy: "⚠️ MITIGAR FORTEMENTE / TRANSFERIR",
+                text: "Risco alto. Ações: contratar seguro, terceirizar atividade crítica, criar plano de contingência detalhado, alocar reserva de contingência no orçamento e prazo."
+            };
+        } else {
+            return {
+                strategy: "🚨 EVITAR ou REVISAR PROJETO",
+                text: "Risco extremo! Recomenda-se: mudar a abordagem técnica, reduzir escopo, cancelar a atividade problemática, ou até cancelar o projeto. Comunique imediatamente aos stakeholders e patrocinadores."
+            };
+        }
+    }
+    
+    // Construir a matriz 5x5
+    const matrixBody = document.getElementById('matrixBody');
+    
+    for (let i = 0; i < 5; i++) {
+        let row = document.createElement('tr');
+        let probCell = document.createElement('th');
+        probCell.textContent = probLevels[i];
+        probCell.style.background = '#34495e';
+        probCell.style.color = 'white';
+        probCell.style.fontSize = '0.85rem';
+        row.appendChild(probCell);
+        
+        for (let j = 0; j < 5; j++) {
+            let cell = document.createElement('td');
+            const score = (i + 1) * (j + 1);
+            cell.textContent = score;
+            cell.classList.add(getRiskClass(score));
+            cell.style.cursor = 'pointer';
+            cell.style.fontWeight = 'bold';
+            
+            cell.addEventListener('click', (function(probIdx, impactIdx) {
+                return function() {
+                    updateRiskPanel(probIdx, impactIdx);
+                };
+            })(i, j));
+            
+            row.appendChild(cell);
+        }
+        matrixBody.appendChild(row);
+    }
+    
+    // Atualizar painel de detalhes
+    function updateRiskPanel(probIdx, impactIdx) {
+        const probValue = probLevels[probIdx];
+        const impactValue = impactLevels[impactIdx];
+        const score = (probIdx + 1) * (impactIdx + 1);
+        const riskLabel = getRiskLabel(score);
+        const response = getRiskResponse(probIdx, impactIdx);
+        
+        document.getElementById('detailProb').textContent = probValue;
+        document.getElementById('detailImpact').textContent = impactValue;
+        document.getElementById('detailScore').textContent = `${score} (${probIdx+1} × ${impactIdx+1})`;
+        document.getElementById('detailClass').innerHTML = riskLabel;
+        
+        const responseDiv = document.getElementById('responseText');
+        responseDiv.innerHTML = `<strong>${response.strategy}</strong><br>${response.text}`;
+        
+        // Animação sutil
+        const panel = document.getElementById('riskPanel');
+        panel.style.transform = 'scale(1.01)';
+        setTimeout(() => { panel.style.transform = 'scale(1)'; }, 200);
+    }
+    
+    // Inicializar com um risco médio (prob=2, impact=2 -> score 9)
+    updateRiskPanel(2, 2);
+    
+    // Lista de exemplos de riscos - CORRIGIDA: agora todos os riscos têm prob e impact como índices 0-4
+    const riskExamples = [
+        { name: "🔌 Falta de energia durante desenvolvimento", prob: 2, impact: 3, probIdx: 1, impactIdx: 2, desc: "Interrupção do trabalho, perda de dados não salvos." },
+        { name: "👨‍💻 Saída inesperada de desenvolvedor sênior", prob: 1, impact: 5, probIdx: 0, impactIdx: 4, desc: "Perda de conhecimento crítico, atraso no cronograma." },
+        { name: "📱 Mudança de requisitos pelo cliente", prob: 4, impact: 3, probIdx: 3, impactIdx: 2, desc: "Retrabalho, aumento de escopo." },
+        { name: "🐛 Bug crítico em produção", prob: 2, impact: 5, probIdx: 1, impactIdx: 4, desc: "Insatisfação do usuário, custo de correção elevado." },
+        { name: "💰 Estouro de orçamento", prob: 3, impact: 4, probIdx: 2, impactIdx: 3, desc: "Recursos insuficientes para concluir." },
+        { name: "📅 Atraso na entrega de fornecedor", prob: 3, impact: 3, probIdx: 2, impactIdx: 2, desc: "Dependência externa compromete cronograma." },
+        { name: "🔒 Violação de segurança de dados", prob: 1, impact: 5, probIdx: 0, impactIdx: 4, desc: "Multas, danos à reputação." },
+        { name: "🌐 Problemas de integração com API", prob: 3, impact: 4, probIdx: 2, impactIdx: 3, desc: "Funcionalidade quebrada, retrabalho." },
+        { name: "📉 Baixa adoção pelo usuário", prob: 4, impact: 2, probIdx: 3, impactIdx: 1, desc: "Fracasso do produto no mercado." },
+        { name: "⚙️ Falha no servidor de produção", prob: 2, impact: 4, probIdx: 1, impactIdx: 3, desc: "Indisponibilidade do sistema." }
+    ];
+    
+    const riskListDiv = document.getElementById('riskExamplesList');
+    
+    riskExamples.forEach(risk => {
+        const riskDiv = document.createElement('div');
+        riskDiv.className = 'risk-item';
+        // Calcular score baseado nos índices (probIdx + 1) * (impactIdx + 1)
+        const score = (risk.probIdx + 1) * (risk.impactIdx + 1);
+        let badgeClass = 'baixo';
+        if (score > 16) badgeClass = 'extremo';
+        else if (score > 9) badgeClass = 'alto';
+        else if (score > 4) badgeClass = 'medio';
+        
+        riskDiv.innerHTML = `
+            <h4>${risk.name}</h4>
+            <p style="font-size:0.8rem; color:#666;">${risk.desc}</p>
+            <div style="font-size:0.75rem; margin-top:5px;">📊 Prob: ${risk.probIdx+1}/5 | 💥 Impacto: ${risk.impactIdx+1}/5</div>
+            <span class="risk-badge ${badgeClass}">Score: ${score} - ${getRiskLabel(score)}</span>
+        `;
+        
+        riskDiv.addEventListener('click', () => {
+            // Usar os índices corretos do exemplo
+            updateRiskPanel(risk.probIdx, risk.impactIdx);
+            // Scroll suave para a matriz
+            document.querySelector('.matrix-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        
+        riskListDiv.appendChild(riskDiv);
+    });
+    
+    // Simulador interativo - CORRIGIDO
+    const simProb = document.getElementById('simProbability');
+    const simImpact = document.getElementById('simImpact');
+    const simProbVal = document.getElementById('simProbVal');
+    const simImpactVal = document.getElementById('simImpactVal');
+    const simProbLevel = document.getElementById('simProbLevel');
+    const simImpactLevel = document.getElementById('simImpactLevel');
+    const simRiskLevel = document.getElementById('simRiskLevel');
+    const simRiskScore = document.getElementById('simRiskScore');
+    const simAdvice = document.getElementById('simAdvice');
+    
+    function getProbLevelFromPercent(percent) {
+        if (percent <= 20) return 1;
+        if (percent <= 40) return 2;
+        if (percent <= 60) return 3;
+        if (percent <= 80) return 4;
+        return 5;
+    }
+    
+    function updateSimulator() {
+        const probPercent = parseInt(simProb.value);
+        const impactLevel = parseInt(simImpact.value);
+        const probLevel = getProbLevelFromPercent(probPercent);
+        const score = probLevel * impactLevel;
+        
+        simProbVal.textContent = probPercent + '%';
+        simImpactVal.textContent = impactLevel;
+        simProbLevel.textContent = probLevel;
+        simImpactLevel.textContent = impactLevel;
+        
+        let levelText, advice, bgHint;
+        if (score <= 4) {
+            levelText = '🟢 Risco BAIXO';
+            advice = '✅ Apenas monitore. Registre no log de riscos e revise mensalmente.';
+            bgHint = '#a5d6a7';
+        } else if (score <= 9) {
+            levelText = '🟡 Risco MÉDIO';
+            advice = '👀 Implemente ações de mitigação simples. Revise a cada 15 dias.';
+            bgHint = '#fff59d';
+        } else if (score <= 16) {
+            levelText = '🟠 Risco ALTO';
+            advice = '⚠️ Plano de mitigação obrigatório. Considere transferir o risco ou alocar reserva de contingência.';
+            bgHint = '#ffab91';
+        } else {
+            levelText = '🔴 Risco EXTREMO';
+            advice = '🚨 EVITAR! Reavalie o projeto. Comunique à alta gerência imediatamente.';
+            bgHint = '#ef9a9a';
+        }
+        
+        simRiskLevel.textContent = levelText;
+        simRiskScore.textContent = `Score: ${score} (${probLevel} × ${impactLevel}) - Máximo 25`;
+        simAdvice.innerHTML = `💡 ${advice}`;
+        simAdvice.style.background = bgHint;
+        simAdvice.style.color = '#2c3e50';
+        simAdvice.style.padding = '12px';
+        simAdvice.style.borderRadius = '10px';
+        simAdvice.style.marginTop = '10px';
+    }
+    
+    simProb.addEventListener('input', updateSimulator);
+    simImpact.addEventListener('input', updateSimulator);
+    updateSimulator();
+</script>
+</body>
+</html>

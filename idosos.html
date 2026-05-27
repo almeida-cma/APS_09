@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>LembreMais | Anti-Esquecimento para Idosos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f0e7 0%, #e8e0d5 100%);
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* cabeçalho com botão emergência fixo */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #c44536, #a03325);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #6b4c3b;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        /* botão de emergência flutuante */
+        .emergency-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #e63946;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.2s ease;
+            border: 2px solid white;
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+
+        .emergency-fab:hover {
+            transform: scale(1.05);
+            background: #c1121f;
+        }
+
+        .emergency-fab span:first-child {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* cards grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 245, 0.96);
+            border-radius: 36px;
+            box-shadow: 0 20px 35px -12px rgba(60, 30, 20, 0.2);
+            padding: 1.4rem 1.3rem;
+            transition: 0.2s;
+            border: 1px solid rgba(210, 170, 140, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #9b4b3a;
+            border-left: 6px solid #e67e22;
+            padding-left: 14px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* formulários */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #7b4a3a;
+            font-size: 0.85rem;
+        }
+
+        input, select, textarea {
+            background: #fffef7;
+            border: 1px solid #e2cfbc;
+            border-radius: 28px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #e67e22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2);
+        }
+
+        .btn {
+            background: #d98c5f;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .btn-primary {
+            background: #c16a4a;
+        }
+
+        .btn-primary:hover {
+            background: #a85436;
+        }
+
+        .btn-success {
+            background: #5f9e6e;
+        }
+
+        .btn-danger {
+            background: #e65c4f;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #c16a4a;
+            color: #c16a4a;
+        }
+
+        /* lista de lembretes */
+        .lembrete-item {
+            background: #fefaf5;
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 6px solid #e67e22;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .lembrete-nome {
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        .lembrete-detalhes {
+            font-size: 0.75rem;
+            color: #7e5a48;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-pequeno {
+            background: #e0c8b6;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            margin-top: 8px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .btn-audio {
+            background: #d9b48b;
+            color: white;
+        }
+
+        /* agenda médica */
+        .consulta-item {
+            background: #fff9f0;
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #f0e0d0;
+        }
+
+        .scrol-list {
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .emerg-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .emerg-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .emerg-content {
+            background: white;
+            max-width: 320px;
+            padding: 2rem;
+            border-radius: 48px;
+            text-align: center;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.3);
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8f6a55;
+            margin-top: 20px;
+        }
+
+        .badge-alarme {
+            background: #fbe9e7;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 680px) {
+            .emergency-fab {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>💊 LembreMais <span style="font-size: 1.4rem;">🧓</span></h1>
+        <p>🔔 Lembrete de remédios • Áudio automático • Botão de emergência • Agenda médica</p>
+    </div>
+
+    <div class="dashboard">
+        <!-- CARD 1: LEMBRETE DE REMÉDIOS + ÁUDIO -->
+        <div class="card">
+            <h2>💊 Remédios <span style="font-size: 0.8rem;">🔊 com áudio</span></h2>
+            <div class="form-group">
+                <label>🧴 Nome do medicamento</label>
+                <input type="text" id="medNome" placeholder="Ex: Losartana 50mg">
+            </div>
+            <div class="form-group">
+                <label>⏰ Horário (HH:MM)</label>
+                <input type="time" id="medHorario" value="08:00">
+            </div>
+            <div class="form-group">
+                <label>📝 Observação (dose, instruções)</label>
+                <input type="text" id="medObs" placeholder="Ex: 1 comprimido após café">
+            </div>
+            <button id="btnAddRemedio" class="btn btn-primary">➕ Adicionar lembrete</button>
+            
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 1rem; margin-bottom: 8px;">📋 Lembretes ativos</h3>
+                <div id="listaRemedios" class="scrol-list" style="max-height: 240px;">
+                    <div style="color:#bbaa99; text-align:center;">Nenhum lembrete cadastrado</div>
+                </div>
+            </div>
+            <div style="font-size: 0.7rem; background: #fff0e4; border-radius: 20px; padding: 8px; margin-top: 12px;">
+                🔔 O sistema verifica horários e emite alerta visual + fala (áudio automático). Toque no botão "Falar" para repetir.
+            </div>
+        </div>
+
+        <!-- CARD 2: AGENDA MÉDICA -->
+        <div class="card">
+            <h2>📅 Agenda Médica</h2>
+            <div class="form-group">
+                <label>🏥 Consulta / Exame</label>
+                <input type="text" id="consultaTitulo" placeholder="Ex: Cardiologista">
+            </div>
+            <div class="form-group">
+                <label>📆 Data</label>
+                <input type="date" id="consultaData">
+            </div>
+            <div class="form-group">
+                <label>⏰ Horário</label>
+                <input type="time" id="consultaHorario">
+            </div>
+            <div class="form-group">
+                <label>📍 Local / Observações</label>
+                <input type="text" id="consultaLocal" placeholder="Hospital, telefone...">
+            </div>
+            <button id="btnAddConsulta" class="btn btn-primary">📌 Adicionar compromisso</button>
+            
+            <div style="margin-top: 20px;">
+                <h3 style="font-size: 1rem;">📌 Próximos eventos</h3>
+                <div id="listaConsultas" class="scrol-list">
+                    <div style="color:#bbaa99; text-align:center;">Nenhum compromisso</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 3: AJUSTES / INFORMAÇÕES -->
+        <div class="card">
+            <h2>🆘 Emergência & Info</h2>
+            <div style="background:#ffe8e0; border-radius: 28px; padding: 14px; text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 2rem;">🆘</div>
+                <p style="margin: 6px 0; font-weight: bold;">Botão de emergência disponível</p>
+                <p style="font-size: 0.8rem;">Clique no botão vermelho flutuante ou toque aqui:</p>
+                <button id="emergSimulador" class="btn btn-danger" style="margin-top: 8px;">🚨 Acionar Emergência</button>
+            </div>
+            <div class="form-group">
+                <label>👤 Nome do paciente / contato de emergência</label>
+                <input type="text" id="contatoEmergencia" placeholder="Ex: Maria (filha) 11 99999-8888">
+            </div>
+            <button id="salvarContatoBtn" class="btn-outline btn">💾 Salvar contato de emergência</button>
+            <div style="margin-top: 16px; font-size: 0.75rem; border-top: 1px solid #edd7c8; padding-top: 10px;">
+                ✅ <strong>Anti-esquecimento inteligente:</strong> ao atingir horário de remédio, o sistema emite <strong>áudio automático</strong> falando o nome e horário. Você também pode tocar no ícone de áudio.
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        🧠 LembreMais - Sistema com voz, emergência e agenda. Dados salvos localmente.
+    </div>
+</div>
+
+<!-- Botão flutuante de emergência -->
+<div id="emergencyFab" class="emergency-fab">
+    <span>🆘</span>
+    <span>Emerg.</span>
+</div>
+
+<!-- Modal emergência -->
+<div id="emergModal" class="emerg-modal">
+    <div class="emerg-content">
+        <div style="font-size: 3rem;">🚨</div>
+        <h3 style="color:#c44536;">EMERGÊNCIA ACIONADA!</h3>
+        <p id="emergMsg" style="margin: 15px 0;">Contato de emergência será informado.</p>
+        <button id="fecharEmerg" class="btn btn-primary">Fechar Alerta</button>
+    </div>
+</div>
+
+<script>
+    // ---------- MODELOS DE DADOS ----------
+    let remedios = [];      // { id, nome, horario, obs, ativo }
+    let consultas = [];     // { id, titulo, data, horario, local }
+    let contatoEmergencia = "Nenhum contato cadastrado. Adicione no campo acima.";
+    
+    const STORAGE_KEY = 'lembreMaisData';
+    
+    // Elementos
+    const btnAddRemedio = document.getElementById('btnAddRemedio');
+    const medNome = document.getElementById('medNome');
+    const medHorario = document.getElementById('medHorario');
+    const medObs = document.getElementById('medObs');
+    const listaRemediosDiv = document.getElementById('listaRemedios');
+    
+    const btnAddConsulta = document.getElementById('btnAddConsulta');
+    const consultaTitulo = document.getElementById('consultaTitulo');
+    const consultaData = document.getElementById('consultaData');
+    const consultaHorario = document.getElementById('consultaHorario');
+    const consultaLocal = document.getElementById('consultaLocal');
+    const listaConsultasDiv = document.getElementById('listaConsultas');
+    
+    const contatoEmergenciaInput = document.getElementById('contatoEmergencia');
+    const salvarContatoBtn = document.getElementById('salvarContatoBtn');
+    const emergSimulador = document.getElementById('emergSimulador');
+    const emergencyFab = document.getElementById('emergencyFab');
+    const emergModal = document.getElementById('emergModal');
+    const emergMsgSpan = document.getElementById('emergMsg');
+    const fecharEmerg = document.getElementById('fecharEmerg');
+    
+    // verificação de áudio + alarme
+    let intervalVerificador = null;
+    let ultimoAlertado = new Map(); // guarda horário último alerta para não repetir a cada minuto
+    
+    // utilitários: síntese de voz
+    function falarTexto(texto) {
+        if (!window.speechSynthesis) {
+            console.warn("Synthesis não suportado");
+            return;
+        }
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        window.speechSynthesis.cancel(); // evita acumular
+        window.speechSynthesis.speak(utterance);
+    }
+    
+    // alerta de remédio (visual + áudio automático)
+    function dispararAlertaRemedio(remedio) {
+        const mensagem = `💊 Hora do remédio: ${remedio.nome}. ${remedio.obs || "Tome conforme orientação médica."}`;
+        // alert visual no canto (estilo não intrusivo)
+        const notifDiv = document.createElement('div');
+        notifDiv.innerText = mensagem;
+        notifDiv.style.position = 'fixed';
+        notifDiv.style.bottom = '100px';
+        notifDiv.style.right = '20px';
+        notifDiv.style.backgroundColor = '#ffedd5';
+        notifDiv.style.borderLeft = '6px solid #e67e22';
+        notifDiv.style.padding = '12px 20px';
+        notifDiv.style.borderRadius = '40px';
+        notifDiv.style.fontWeight = 'bold';
+        notifDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        notifDiv.style.zIndex = '1500';
+        notifDiv.style.maxWidth = '280px';
+        notifDiv.style.fontSize = '0.9rem';
+        document.body.appendChild(notifDiv);
+        setTimeout(() => { notifDiv.remove(); }, 8000);
+        
+        // ÁUDIO AUTOMÁTICO: falar o lembrete
+        falarTexto(`Atenção! ${remedio.nome}. ${remedio.obs || "Hora de tomar o medicamento"}`);
+        
+        // Registrar alerta para não repetir no mesmo minuto
+        const now = new Date();
+        const key = remedio.id + "_" + now.toISOString().slice(0, 16);
+        ultimoAlertado.set(remedio.id, now.getTime());
+    }
+    
+    // verificar horários a cada 30 segundos
+    function verificarHorariosRemedios() {
+        const agora = new Date();
+        const horaMin = `${String(agora.getHours()).padStart(2,'0')}:${String(agora.getMinutes()).padStart(2,'0')}`;
+        
+        for (let r of remedios) {
+            if (r.horario === horaMin) {
+                const ultimo = ultimoAlertado.get(r.id) || 0;
+                const diffMinutos = (agora.getTime() - ultimo) / 60000;
+                // alertar apenas se não tiver alertado nos últimos 2 minutos
+                if (diffMinutos > 2) {
+                    dispararAlertaRemedio(r);
+                }
+            }
+        }
+    }
+    
+    // salvar tudo no localStorage
+    function salvarDados() {
+        const data = {
+            remedios: remedios,
+            consultas: consultas,
+            contatoEmergencia: contatoEmergencia
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        renderizarRemedios();
+        renderizarConsultas();
+    }
+    
+    function carregarDados() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+            // dados exemplo
+            const hoje = new Date().toISOString().slice(0,10);
+            remedios = [
+                { id: crypto.randomUUID ? crypto.randomUUID() : 'r1', nome: "Losartana 50mg", horario: "08:00", obs: "1 comprimido em jejum", ativo: true },
+                { id: crypto.randomUUID ? crypto.randomUUID() : 'r2', nome: "Metformina 850mg", horario: "19:30", obs: "Após o jantar", ativo: true }
+            ];
+            consultas = [
+                { id: crypto.randomUUID ? crypto.randomUUID() : 'c1', titulo: "Consulta Cardio", data: hoje, horario: "14:30", local: "Hospital Sírio, Dr. Almeida" },
+                { id: crypto.randomUUID ? crypto.randomUUID() : 'c2', titulo: "Exame de Sangue", data: "2026-06-15", horario: "09:00", local: "Laboratório central" }
+            ];
+            contatoEmergencia = "Maria (filha) - (11) 98765-4321";
+        } else {
+            try {
+                const data = JSON.parse(raw);
+                remedios = data.remedios || [];
+                consultas = data.consultas || [];
+                contatoEmergencia = data.contatoEmergencia || "Nenhum contato cadastrado.";
+            } catch(e) { console.warn(e); }
+        }
+        if (contatoEmergenciaInput) contatoEmergenciaInput.value = contatoEmergencia;
+        renderizarRemedios();
+        renderizarConsultas();
+    }
+    
+    // render lembretes
+    function renderizarRemedios() {
+        if (!listaRemediosDiv) return;
+        if (remedios.length === 0) {
+            listaRemediosDiv.innerHTML = `<div style="color:#bbaa99; text-align:center;">✨ Sem lembretes. Adicione um remédio</div>`;
+            return;
+        }
+        let html = '';
+        for (let r of remedios) {
+            html += `
+                <div class="lembrete-item">
+                    <div class="lembrete-nome">💊 ${escapeHtml(r.nome)} <span style="font-size:0.7rem;">⏰ ${r.horario}</span></div>
+                    <div class="lembrete-detalhes">📝 ${escapeHtml(r.obs || 'Sem observação')}</div>
+                    <div>
+                        <button class="btn-pequeno btn-audio" data-id="${r.id}" data-acao="falar">🔊 Falar lembrete</button>
+                        <button class="btn-pequeno" data-id="${r.id}" data-acao="excluirRemedio">🗑️ Remover</button>
+                    </div>
+                </div>
+            `;
+        }
+        listaRemediosDiv.innerHTML = html;
+        
+        // eventos dinâmicos
+        document.querySelectorAll('.btn-pequeno[data-acao="falar"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                const remedio = remedios.find(r => r.id === id);
+                if (remedio) {
+                    falarTexto(`Lembrete: ${remedio.nome} às ${remedio.horario}. ${remedio.obs || ""}`);
+                }
+            });
+        });
+        document.querySelectorAll('.btn-pequeno[data-acao="excluirRemedio"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                remedios = remedios.filter(r => r.id !== id);
+                salvarDados();
+            });
+        });
+    }
+    
+    // render consultas (ordem por data)
+    function renderizarConsultas() {
+        if (!listaConsultasDiv) return;
+        if (consultas.length === 0) {
+            listaConsultasDiv.innerHTML = `<div style="color:#bbaa99; text-align:center;">📆 Nenhum compromisso agendado</div>`;
+            return;
+        }
+        const ordenadas = [...consultas].sort((a,b) => (a.data + a.horario).localeCompare(b.data + b.horario));
+        let html = '';
+        for (let c of ordenadas) {
+            html += `
+                <div class="consulta-item">
+                    <strong>🏥 ${escapeHtml(c.titulo)}</strong><br>
+                    📅 ${c.data} às ${c.horario}<br>
+                    📍 ${escapeHtml(c.local || 'Local não informado')}
+                    <div style="margin-top: 6px;">
+                        <button class="btn-pequeno" data-id="${c.id}" data-acao="excluirConsulta">🗑️ Excluir</button>
+                    </div>
+                </div>
+            `;
+        }
+        listaConsultasDiv.innerHTML = html;
+        document.querySelectorAll('.btn-pequeno[data-acao="excluirConsulta"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                consultas = consultas.filter(c => c.id !== id);
+                salvarDados();
+            });
+        });
+    }
+    
+    // adicionar remedio
+    function adicionarRemedio() {
+        let nome = medNome.value.trim();
+        const horario = medHorario.value;
+        const obs = medObs.value.trim();
+        if (!nome) {
+            alert("❌ Informe o nome do medicamento.");
+            return;
+        }
+        if (!horario) {
+            alert("❌ Escolha um horário.");
+            return;
+        }
+        const novoId = crypto.randomUUID ? crypto.randomUUID() : Date.now() + '' + Math.random();
+        remedios.push({
+            id: novoId,
+            nome: nome,
+            horario: horario,
+            obs: obs || "",
+            ativo: true
+        });
+        medNome.value = '';
+        medObs.value = '';
+        medHorario.value = "08:00";
+        salvarDados();
+        falarTexto(`Lembrete de ${nome} adicionado para as ${horario}`);
+    }
+    
+    function adicionarConsulta() {
+        let titulo = consultaTitulo.value.trim();
+        const data = consultaData.value;
+        const horario = consultaHorario.value;
+        const local = consultaLocal.value.trim();
+        if (!titulo) {
+            alert("Informe o título da consulta.");
+            return;
+        }
+        if (!data) {
+            alert("Selecione a data da consulta.");
+            return;
+        }
+        const novoId = crypto.randomUUID ? crypto.randomUUID() : Date.now() + '' + Math.random();
+        consultas.push({
+            id: novoId,
+            titulo: titulo,
+            data: data,
+            horario: horario || "Horário não definido",
+            local: local || ""
+        });
+        consultaTitulo.value = '';
+        consultaData.value = '';
+        consultaHorario.value = '';
+        consultaLocal.value = '';
+        salvarDados();
+        falarTexto(`Consulta agendada: ${titulo} no dia ${data}`);
+    }
+    
+    function atualizarContatoEmergencia() {
+        const novoContato = contatoEmergenciaInput.value.trim();
+        if (novoContato === "") {
+            contatoEmergencia = "Nenhum contato cadastrado.";
+        } else {
+            contatoEmergencia = novoContato;
+        }
+        salvarDados();
+        alert("✅ Contato de emergência salvo!");
+        falarTexto("Contato de emergência atualizado.");
+    }
+    
+    // função acionar emergência
+    function acionarEmergencia() {
+        const contatoMsg = contatoEmergencia && contatoEmergencia !== "Nenhum contato cadastrado." 
+            ? `Contato de emergência: ${contatoEmergencia}` 
+            : "Nenhum contato de emergência cadastrado. Por favor, adicione um contato no sistema.";
+        emergMsgSpan.innerText = contatoMsg;
+        emergModal.classList.add('active');
+        // áudio automático de emergência
+        falarTexto(`EMERGÊNCIA ACIONADA! ${contatoMsg}`);
+        // também simular alerta visual
+        const alertaEmerg = document.createElement('div');
+        alertaEmerg.innerText = "🚨 EMERGÊNCIA! Procure ajuda imediatamente. 🚨";
+        alertaEmerg.style.position = 'fixed';
+        alertaEmerg.style.top = '20px';
+        alertaEmerg.style.left = '20px';
+        alertaEmerg.style.right = '20px';
+        alertaEmerg.style.backgroundColor = '#e63946';
+        alertaEmerg.style.color = 'white';
+        alertaEmerg.style.padding = '15px';
+        alertaEmerg.style.borderRadius = '30px';
+        alertaEmerg.style.fontWeight = 'bold';
+        alertaEmerg.style.textAlign = 'center';
+        alertaEmerg.style.zIndex = '3000';
+        document.body.appendChild(alertaEmerg);
+        setTimeout(() => alertaEmerg.remove(), 10000);
+    }
+    
+    function fecharModalEmergencia() {
+        emergModal.classList.remove('active');
+    }
+    
+    // inicia verificador periódico (a cada 30s)
+    function iniciarVerificador() {
+        if (intervalVerificador) clearInterval(intervalVerificador);
+        intervalVerificador = setInterval(() => {
+            verificarHorariosRemedios();
+        }, 30000);
+        verificarHorariosRemedios(); // já verifica no início
+    }
+    
+    // escapar HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // eventos principais
+    btnAddRemedio.addEventListener('click', adicionarRemedio);
+    btnAddConsulta.addEventListener('click', adicionarConsulta);
+    salvarContatoBtn.addEventListener('click', atualizarContatoEmergencia);
+    emergSimulador.addEventListener('click', acionarEmergencia);
+    emergencyFab.addEventListener('click', acionarEmergencia);
+    fecharEmerg.addEventListener('click', fecharModalEmergencia);
+    
+    // fechar modal clicando fora (backdrop)
+    emergModal.addEventListener('click', (e) => {
+        if (e.target === emergModal) fecharModalEmergencia();
+    });
+    
+    // carregar e iniciar
+    carregarDados();
+    iniciarVerificador();
+    
+    // pré carregar contato no campo
+    if (contatoEmergenciaInput) contatoEmergenciaInput.value = contatoEmergencia;
+    
+    // exemplo de boas-vindas com áudio apenas se não for incômodo (opcional)
+    setTimeout(() => {
+        falarTexto("Aplicativo LembreMais carregado. Lembretes de remédios e emergência ativos.");
+    }, 800);
+</script>
+</body>
+</html>
